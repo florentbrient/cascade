@@ -1,0 +1,10 @@
+machine: jean-zay
+path: /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/
+vtyp: V5-7-0
+case: FIRE3D
+sens: FIZ4c
+prefix: FIZ4c
+OUT: OUT
+nc4: nc
+pathsave: /lustre/fswork/projects/rech/whl/rces071/Github/spectrum_analysis/data/spectra/
+pathfig: /lustre/fswork/projects/rech/whl/rces071/Github/spectrum_analysis/figures/
