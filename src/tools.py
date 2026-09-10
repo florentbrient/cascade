@@ -461,3 +461,16 @@ def compute_gradients(u, dx, dy, z, v=None, w=None):
 
     return du_dx, dv_dx, dw_dx, du_dy, dv_dy, dw_dy, du_dz, dv_dz, dw_dz
 
+
+def checkvariance(k,E,field,type='var'):
+    varspec = np.trapz(E,x=k)
+    if type=='mean':
+        varfield= np.mean(field)
+    else:
+        varfield= np.var(field)
+    print('variance Spectra ',varspec)
+    print('variance Field ',varfield)
+    perc=100*varspec/varfield
+    sentence='The spectra represent {perc}% of the {type} of the field'
+    print(sentence.format(perc=perc,type=type))
+    return None
