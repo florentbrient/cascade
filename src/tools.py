@@ -92,6 +92,11 @@ def z2k(z):
 def resiz(tmp): # should be removed by pre-treatment
     return np.squeeze(tmp)
 
+# Fin nearest point
+def near(array,value):
+    idx=(abs(array-value)).argmin()
+    return idx
+
 # Open a variable (try or error)
 def tryopen(vv,DATA):
     try:

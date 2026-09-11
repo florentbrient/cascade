@@ -16,6 +16,7 @@ import pylab as plt
 
 def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                               scalar=None,
+                              windsb=None,windsc=None,
                               norm='ortho', dealiasing_23=False,
                               binning='log',nbins=80):
     """
@@ -43,7 +44,13 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     """
 
     # Retrieve winds
-    U,V,W = winds
+    U, V, W  = winds
+    Ub,Vb,Wb = winds
+    Uc,Vc,Wc = winds
+    if windsb is not None:
+        Ub,Vb,Wb = windsb
+    if windsc is not None:
+        Uc,Vc,Wc = windsc
 
     # shapes
     Nz, Ny, Nx = U.shape
@@ -74,18 +81,18 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     # Gradients
     #dzall     = np.repeat(dz,Nz)
     zall      = np.arange(0,Nz)*dz
-    gradients = tl.compute_gradients(U, dx, dy, zall, v=V, w=W)
+    gradients = tl.compute_gradients(Uc, dx, dy, zall, v=Vc, w=Wc)
     (du_dx, dv_dx, dw_dx, 
      du_dy, dv_dy, dw_dy, 
      du_dz, dv_dz, dw_dz) = gradients
     
     # nonlinear term N = u · ∇u (vector)
-    N_uu = U * du_dx + V * du_dy
-    N_uw = W * du_dz
-    N_vu = U * dv_dx + V * dv_dy
-    N_vw = W * dv_dz
-    N_wu = U * dw_dx + V * dw_dy
-    N_ww = W * dw_dz
+    N_uu = Ub * du_dx + Vb * du_dy
+    N_uw = Wb * du_dz
+    N_vu = Ub * dv_dx + Vb * dv_dy
+    N_vw = Wb * dv_dz
+    N_wu = Ub * dw_dx + Vb * dw_dy
+    N_ww = Wb * dw_dz
     N_u  = N_uu + N_uw
     N_v  = N_vu + N_vw
     N_w  = N_wu + N_ww
@@ -95,8 +102,8 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
          dscalar_dy, b, e, 
          dscalar_dz, c, f) = gradientsS
         # Nonlinear term n= U ∇THLM (vector)
-        N_scalar_u = U * dscalar_dx + V * dscalar_dy
-        N_scalar_w = W * dscalar_dz
+        N_scalar_u = Ub * dscalar_dx + Vb * dscalar_dy
+        N_scalar_w = Wb * dscalar_dz
 #        N_scalar   = N_scalar_u + N_scalar_w
         
     # Calculate Energy spectra
@@ -108,43 +115,44 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     
     kk1,kk2 = [None for ij in range(2)]
     PI_k, PI_hh, PI_hv, PI_vh, PI_vv = [None for ij in range(5)]
-    PI_3D, PI_hz = [None for ij in range(2)]
+    PI_3d, PI_hz = [None for ij in range(2)]
     
-    time1 = time.time()
-    if scalar is None:
-
-        kk1, PI_3d, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
-                                             U, V, W, N_u, N_v, N_w, 
-                                             dx=dx,dy=dy,dz=dz,
-                                             binning=binning, nbins=nbins,
-                                             Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
-                                             Nvh=(N_wu),Nvv=(N_ww),
-                                             filter_type='spectral_3d')
+    if windsb is None and windsc is None:
+        time1 = time.time()
+        if scalar is None:
+    
+            kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
+                                                 U, V, W, N_u, N_v, N_w, 
+                                                 dx=dx,dy=dy,dz=dz,
+                                                 binning=binning, nbins=nbins,
+                                                 Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
+                                                 Nvh=(N_wu),Nvv=(N_ww),
+                                                 filter_type='spectral_3d')
+            
+            # Test a different filter
+            kk2, PI_hz2,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
+                                                 kk=kk1, # To force the save k-axis
+                                                 w_bc='dst',
+                                                 dx=dx,dy=dy,dz=dz,
+                                                 binning=binning, nbins=nbins,
+                                                 filter_type='spectral_hz')
+    
+        else:
+            kk1, PI_3d,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(U,V,W,
+                                        N_u,N_v,N_w,
+                                        scalar=(scalar,N_scalar_u,N_scalar_w),
+                                        kk=k_bins,dx=dx,dy=dy,dz=dz)
+        time2 = time.time()
+        print('%s function took %0.3f ms' % ("Calculate PI_k2", (time2-time1)*1000.0))
         
-        # Test a different filter
-        kk2, PI_hz2,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
-                                             kk=kk1, # To force the save k-axis
-                                             w_bc='dst',
-                                             dx=dx,dy=dy,dz=dz,
-                                             binning=binning, nbins=nbins,
-                                             filter_type='spectral_hz')
-
-    else:
-        kk1, PI_3d,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(U,V,W,
-                                    N_u,N_v,N_w,
-                                    scalar=(scalar,N_scalar_u,N_scalar_w),
-                                    kk=k_bins,dx=dx,dy=dy,dz=dz)
-    time2 = time.time()
-    print('%s function took %0.3f ms' % ("Calculate PI_k2", (time2-time1)*1000.0))
-    
-    # For information, Egality is:
-    # Pi_k2[1] = PI_3d/(nx*ny*nz)
-    
-    #for idxk,k_idx in enumerate(k_mag):
-    #    tmp_PI = u_k[idxk,:,:,:]*N_u+\
-    #             v_k[idxk,:,:,:]*N_v+\
-    #             w_k[idxk,:,:,:]*N_w 
-    #    PI_k2  = np.mean(tmp_PI,axis=(1,2,3))
+        # For information, Egality is:
+        # Pi_k2[1] = PI_3d/(nx*ny*nz)
+        
+        #for idxk,k_idx in enumerate(k_mag):
+        #    tmp_PI = u_k[idxk,:,:,:]*N_u+\
+        #             v_k[idxk,:,:,:]*N_v+\
+        #             w_k[idxk,:,:,:]*N_w 
+        #    PI_k2  = np.mean(tmp_PI,axis=(1,2,3))
     
 
     
