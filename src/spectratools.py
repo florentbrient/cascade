@@ -14,6 +14,18 @@ from scipy.fft import dctn, idctn, dstn, idstn
 
 import pylab as plt
 
+def make_kbins(k_min,k_max,nbins=50,binning='log'):
+    
+    if binning.lower() == 'log':
+        k_bins = np.logspace(np.log10(k_min), np.log10(k_max), nbins+1)
+        # use geometric mean as center
+        k_shell_centers = np.sqrt(k_bins[:-1] * k_bins[1:])
+    else:
+        k_bins = np.linspace(0.0, k_max, nbins+1)
+        k_shell_centers = 0.5*(k_bins[:-1] + k_bins[1:]) 
+        
+    return k_bins,k_shell_centers
+
 def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                               scalar=None,
                               windsb=None,windsc=None,
@@ -70,13 +82,10 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     
     k_min      = np.min(k_mag_flat[k_mag_flat > 0])
     k_max      = np.max(k_mag_flat)
-    if binning.lower() == 'log':
-        k_bins = np.logspace(np.log10(k_min), np.log10(k_max), nbins+1)
-        # use geometric mean as center
-        k_shell_centers = np.sqrt(k_bins[:-1] * k_bins[1:])
-    else:
-        k_bins = np.linspace(0.0, k_max, nbins+1)
-        k_shell_centers = 0.5*(k_bins[:-1] + k_bins[1:])          
+    
+    k_bins,k_shell_centers= make_kbins(k_min,k_max,
+                                       nbins=nbins,binning=binning)
+            
 
     # Gradients
     #dzall     = np.repeat(dz,Nz)
@@ -107,9 +116,9 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
 #        N_scalar   = N_scalar_u + N_scalar_w
         
     # Calculate Energy spectra
-    k,mode_count,E,T,Pi     =  compute_E(
-                                k_bins,k_mag,U,N_u,
-                                V=(V,N_v),W=(W,N_w))
+    k,mode_count,E,T,Pi,E_k3,T_k3 =  compute_E(
+                                    k_bins,k_mag,U,N_u,
+                                    V=(V,N_v),W=(W,N_w))
     
         
     
@@ -124,13 +133,14 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
             kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
                                                  U, V, W, N_u, N_v, N_w, 
                                                  dx=dx,dy=dy,dz=dz,
-                                                 binning=binning, nbins=nbins,
+                                                 kk=k_bins, # To force the save k-axis
+#                                                 binning=binning, nbins=nbins,
                                                  Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
                                                  Nvh=(N_wu),Nvv=(N_ww),
                                                  filter_type='spectral_3d')
             
             # Test a different filter
-            kk2, PI_hz2,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
+            kk2, PI_hz,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
                                                  kk=kk1, # To force the save k-axis
                                                  w_bc='dst',
                                                  dx=dx,dy=dy,dz=dz,
@@ -138,10 +148,11 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                                                  filter_type='spectral_hz')
     
         else:
-            kk1, PI_3d,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(U,V,W,
+            kk1, PI_k ,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(U,V,W,
                                         N_u,N_v,N_w,
                                         scalar=(scalar,N_scalar_u,N_scalar_w),
-                                        kk=k_bins,dx=dx,dy=dy,dz=dz)
+                                        kk=k_bins,
+                                        dx=dx,dy=dy,dz=dz)
         time2 = time.time()
         print('%s function took %0.3f ms' % ("Calculate PI_k2", (time2-time1)*1000.0))
         
@@ -154,16 +165,29 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
         #             w_k[idxk,:,:,:]*N_w 
         #    PI_k2  = np.mean(tmp_PI,axis=(1,2,3))
     
+    
+    # Compute Parallel and perpendicular
+    k_center_perp, E_perp, T_perp, Pi_perp, \
+    k_center_para, E_para, T_para, Pi_para = [None for ij in range(8)]
+    
+    k_center_perp, E_perp, T_perp, Pi_perp,\
+    k_center_para, E_para, T_para, Pi_para = spectral_cyl_plane(E_k3, T_k3,
+                                      kx, ky, kz, 
+                                      n_bins_perp=nbins, 
+                                      n_bins_para=nbins, 
+                                      binning=binning)
 
     
-    out = dict(k=k, k_shell_centers=k_shell_centers,
+    out = dict(k=k, 
+               k_shell_centers=k_shell_centers,
                mode_count=mode_count,
                E=E,T=T,Pi=Pi,
                PI_k=PI_k, 
                PI_hh=PI_hh, PI_hv=PI_hv,
                PI_vh=PI_vh, PI_vv=PI_vv,
-               kk1=kk1, PI_3d=PI_3d,
-               kk2=kk2, PI_hz5=PI_hz)
+               kk2=kk2, PI_hz=PI_hz,
+               kperp=k_center_perp, Eperp=E_perp, Tperp=T_perp, Piperp=Pi_perp,
+               kpara=k_center_para, Epara=E_para, Tpara=T_para, Pipara=Pi_para)
     return out
 
 def compute_E(k,k_mag,U,N_u,
@@ -233,7 +257,7 @@ def compute_E(k,k_mag,U,N_u,
     # Calculate Pi transfer
     Pi_k = -np.cumsum(T_k)
 
-    return k,mode_count,E_k,T_k,Pi_k    
+    return k,mode_count,E_k,T_k,Pi_k,E_k3,T_k3
 
 def compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,
                          scalar=None,
@@ -308,10 +332,10 @@ def compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,
             ktmp = make_k3(kz1)
         kmax = ktmp.max()
         kmin = np.min(ktmp[ktmp > 0])
-        if binning.lower() == 'log':
-            kk = np.logspace(np.log10(kmin), np.log10(kmax), nbins + 1)
-        else:
-            kk = np.linspace(0.0, kmax, nbins + 1)
+            
+        kk,kshell= make_kbins(kmin,kmax,
+                              nbins=nbins,
+                              binning=binning)
 
     kk = np.asarray(kk)
     nk = len(kk)
@@ -451,3 +475,200 @@ def compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,
             PI_hv[i] = np.mean(scalar_f * scalar[2])
 
     return kk, PI_k2, PI_hh, PI_hv, PI_vh, PI_vv
+
+
+def spectral_cyl_plane(E, T, kx, ky, kz, dealias_mask=None,
+                       n_bins_perp=50, n_bins_para=50, binning='log'):
+    """
+    Compute 1D cylindrical (k_perp) and planar (k_para) averaged spectra.
+    Returns both shell-integrated and count-normalized versions.
+    """
+    # --- Setup ---
+    k_perp = np.sqrt(kx**2 + ky**2)
+    k_para = np.abs(kz)
+    #mask = dealias_mask
+
+    # --- Flatten masked values ---
+    kf_perp = k_perp #[mask]
+    kf_para = k_para #[mask]
+    Ef = E #[mask]
+    Tf = T #[mask]
+
+    # --- Cylindrical (k_perp) binning ---
+    kmin_p = np.nanmin(kf_perp[kf_perp > 0])
+    kmax_p = np.nanmax(kf_perp)
+    
+    k_bins_perp, k_center_perp = make_kbins(kmin_p,kmax_p,
+                                          nbins=n_bins_perp,binning=binning)
+
+    inds_perp = np.digitize(kf_perp, k_bins_perp) - 1
+
+    E_perp = np.zeros(n_bins_perp)
+    T_perp = np.zeros(n_bins_perp)
+    count_perp = np.zeros(n_bins_perp, dtype=int)
+
+    for s in range(n_bins_perp):
+        sel = inds_perp == s
+        #print(s,sel.shape,Ef.shape)
+        if np.any(sel):
+            count_perp[s] = np.count_nonzero(sel)
+            E_perp[s] = Ef[sel].sum()
+            T_perp[s] = Tf[sel].sum()
+
+    # --- Planar (k_parallel = |kz|) binning ---
+    #kmin_z = np.nanmin(kf_para[kf_para > 0])
+    #kmax_z = np.nanmax(kf_para)
+    # if binning == 'log':
+    #     k_bins_para = np.logspace(np.log10(kmin_z), np.log10(kmax_z), n_bins_para + 1)
+    #     k_center_para = np.sqrt(k_bins_para[:-1] * k_bins_para[1:])
+    # else:
+    #     k_bins_para = np.linspace(0, kmax_z, n_bins_para + 1)
+    #     k_center_para = 0.5 * (k_bins_para[:-1] + k_bins_para[1:])
+        
+    # test
+    k_bins_para = np.unique(k_para[:,0,0])
+    k_center_para = 0.5 * (k_bins_para[:-1] + k_bins_para[1:])
+    n_bins_para = len(k_center_para)
+
+    inds_para = np.digitize(kf_para, k_bins_para) - 1
+
+    E_para = np.zeros(n_bins_para)
+    T_para = np.zeros(n_bins_para)
+    count_para = np.zeros(n_bins_para, dtype=int)
+
+    for s in range(n_bins_para):
+        sel = inds_para == s
+        if np.any(sel):
+            count_para[s] = np.count_nonzero(sel)
+            E_para[s] = Ef[sel].sum()
+            T_para[s] = Tf[sel].sum()
+
+    # Optional: normalize by count for per-mode average
+    E_perp_mean = np.divide(E_perp, count_perp, out=np.zeros_like(E_perp), where=count_perp>0)
+    E_para_mean = np.divide(E_para, count_para, out=np.zeros_like(E_para), where=count_para>0)
+
+    Pi_perp = -np.cumsum(T_perp) 
+    Pi_para = -np.cumsum(T_para) 
+
+    return k_center_perp, E_perp, T_perp, Pi_perp,\
+           k_center_para, E_para, T_para, Pi_para
+           
+          
+# Integrate Cascade
+"""
+Intégration du flux d'énergie spectral Pi(k) sur l'axe log(k),
+de -infty (= plus petit k disponible) jusqu'à kH,
+en ne sommant que les contributions où Pi(k) < 0
+(partie "cascade inverse" du flux).
+
+Convention : en variable u = ln(k), du = dk/k, donc
+    ∫ Pi(k) d(ln k) = ∫ Pi(k)/k dk
+On intègre donc directement Pi par rapport à ln(k) (trapèzes),
+ce qui gère naturellement le changement de variable log.
+"""
+
+
+def integrate_negative_cascade(k, Pi, kH, method="trapz", refine_crossings=True):
+    """
+    Intègre Pi(k) sur ln(k), de min(k) à kH, en ne gardant que Pi < 0.
+    
+    Appel
+    ----------
+    I, info = integrate_negative_cascade(k, Pi, kH, method="trapz")
+    print(f"Intégrale de Pi (Pi<0 uniquement) jusqu'à kH={kH} : {I:.4f}")
+
+    Paramètres
+    ----------
+    k : array_like
+        Nombres d'onde (k > 0), taille N. Pas besoin d'être trié
+        ni uniformément espacé.
+    Pi : array_like
+        Flux d'énergie spectral Pi(k), même taille que k.
+    kH : float
+        Borne supérieure d'intégration (ex. nombre d'onde au sommet
+        de la couche limite / cloud-top).
+    method : {"trapz", "simpson"}
+        Méthode d'intégration numérique.
+    refine_crossings : bool
+        Si True, ajoute des points interpolés aux endroits où Pi
+        change de signe, pour éviter de "couper" une zone négative
+        au milieu d'un intervalle (plus précis près des bords
+        Pi=0 et près de kH).
+
+    Retour
+    ------
+    integral : float
+        Valeur de l'intégrale (unités de Pi, car d(ln k) est sans
+        dimension).
+    mask_info : dict
+        Diagnostics utiles : k_used, Pi_used, integrand_used.
+    """
+    k = np.asarray(k, dtype=float)
+    Pi = np.asarray(Pi, dtype=float)
+
+    if k.shape != Pi.shape:
+        raise ValueError("k et Pi doivent avoir la même forme")
+    if np.any(k <= 0):
+        raise ValueError("k doit être strictement positif (échelle log)")
+
+    # Tri croissant en k
+    order = np.argsort(k)
+    k, Pi = k[order], Pi[order]
+
+    # Restriction à k <= kH (on tronque/interpole le dernier point si besoin)
+    if kH < k.max():
+        i_cut = np.searchsorted(k, kH)
+        if i_cut == 0:
+            raise ValueError("kH est inférieur à tous les k fournis")
+        # interpolation de Pi à k=kH pour ne pas perdre la borne exacte
+        Pi_kH = np.interp(kH, k, Pi)
+        k = np.concatenate([k[:i_cut], [kH]])
+        Pi = np.concatenate([Pi[:i_cut], [Pi_kH]])
+    # si kH >= k.max(), on garde tout le tableau tel quel
+
+    lnk = np.log(k)
+
+    if refine_crossings:
+        lnk, Pi = _insert_zero_crossings(lnk, Pi)
+
+    # On annule les portions où Pi >= 0 : l'intégrande reste continue
+    # (vaut 0 hors des zones de cascade inverse) au lieu de "sauter"
+    # des points, ce qui serait faux pour une intégrale numérique.
+    integrand = np.where(Pi < 0, Pi, 0.0)
+
+    if method == "trapz":
+        trapz_fn = getattr(np, "trapezoid", None) or np.trapz
+        integral = trapz_fn(integrand, lnk)
+    elif method == "simpson":
+        from scipy.integrate import simpson
+        integral = simpson(integrand, x=lnk)
+    else:
+        raise ValueError("method doit être 'trapz' ou 'simpson'")
+
+    mask_info = {
+        "k_used": np.exp(lnk),
+        "Pi_used": Pi,
+        "integrand_used": integrand,
+    }
+    return integral, mask_info
+
+
+def _insert_zero_crossings(x, y):
+    """
+    Insère un point interpolé (x0, 0) à chaque changement de signe de y,
+    pour que le masque Pi<0 tombe pile sur les bords des zones négatives.
+    """
+    x_new, y_new = [x[0]], [y[0]]
+    for i in range(1, len(x)):
+        if y[i - 1] * y[i] < 0:  # changement de signe strict
+            # interpolation linéaire du zéro
+            t = -y[i - 1] / (y[i] - y[i - 1])
+            x0 = x[i - 1] + t * (x[i] - x[i - 1])
+            x_new.append(x0)
+            y_new.append(0.0)
+        x_new.append(x[i])
+        y_new.append(y[i])
+    return np.array(x_new), np.array(y_new)
+
+
+

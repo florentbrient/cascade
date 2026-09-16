@@ -309,7 +309,7 @@ def compute_Pi_2D_map(U, V, W, dx, dy, z, ell_h_list, ell_z_list, filter_type='s
     """
     Calcule la carte 2D Pi(ell_h, ell_z).
     """
-    Pi_map = np.zeros((len(ell_h_list), len(ell_z_list)))
+    Pi_map = np.zeros((len(ell_h_list), len(ell_z_list), len(z)))
 
     for i, ell_h in enumerate(ell_h_list):
         for j, ell_z in enumerate(ell_z_list):
@@ -317,7 +317,7 @@ def compute_Pi_2D_map(U, V, W, dx, dy, z, ell_h_list, ell_z_list, filter_type='s
                 U, V, W, dx, dy, z, ell_h, ell_z, filter_type, flux_type
             )
             # Prendre la moyenne sur z (ou un autre profil)
-            Pi_map[i, j] = res[flux_type][1].mean()
+            Pi_map[i, j, :] = res[flux_type][1]
 
     return Pi_map
 
