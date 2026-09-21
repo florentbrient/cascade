@@ -11,7 +11,6 @@ import tools as tl
 import time
 from scipy.ndimage import gaussian_filter
 from scipy.fft import dctn, idctn, dstn, idstn
-
 import pylab as plt
 
 def make_kbins(k_min,k_max,nbins=50,binning='log'):
@@ -26,11 +25,31 @@ def make_kbins(k_min,k_max,nbins=50,binning='log'):
         
     return k_bins,k_shell_centers
 
+def make_edges_adaptive(k_mag, nbins=80, nmin=20):
+    """
+    Bords log-espacés, calés sur les valeurs |k| réellement présentes,
+    avec au moins nmin modes par bin. Chaque bord est un |k| existant,
+    donc le test '<=' est exact en flottants.
+    """
+    kv = np.sort(k_mag.ravel())
+    kv = kv[kv > 0]
+    target = np.geomspace(kv[0], kv[-1], nbins + 1)
+    idx = np.searchsorted(kv, target, side='right')   # nb de modes <= target
+    keep_idx = [max(idx[0], nmin)]
+    for j in idx[1:]:
+        if j - keep_idx[-1] >= nmin:
+            keep_idx.append(j)
+    if keep_idx[-1] < len(kv):                        # inclure les derniers modes
+        keep_idx.append(len(kv))
+    return kv[np.array(keep_idx) - 1]
+
+
 def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                               scalar=None,
                               windsb=None,windsc=None,
                               norm='ortho', dealiasing_23=False,
-                              binning='log',nbins=80):
+                              binning='log', k_bins=None,
+                              nbins=80,nmin=None):
     """
     Compute spectral KE E(kx,ky,kz), nonlinear transfer T(kx,ky,kz), 
     and shell-averaged E(k), T(k).
@@ -70,22 +89,28 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     if scalar is not None:
         assert scalar.shape == U.shape
     
-
-    # build wavenumber arrays (rad/m)
-    kx_1d = 2*np.pi * np.fft.fftfreq(Nx, d=dx)
-    ky_1d = 2*np.pi * np.fft.fftfreq(Ny, d=dy)
-    kz_1d = 2*np.pi * np.fft.fftfreq(Nz, d=dz)
-    kz, ky, kx = np.meshgrid(kz_1d, ky_1d, kx_1d, indexing='ij')  # shape (Nz,Ny,Nx)
-    
-    k_mag      = np.sqrt(kx**2 + ky**2 + kz**2)
-    k_mag_flat = k_mag.ravel()
-    
-    k_min      = np.min(k_mag_flat[k_mag_flat > 0])
-    k_max      = np.max(k_mag_flat)
-    
-    k_bins,k_shell_centers= make_kbins(k_min,k_max,
-                                       nbins=nbins,binning=binning)
+    if k_bins is None: 
+    # !! The situation with k_bins is NOT None doesn't work because of k_mag
+        # build wavenumber arrays (rad/m)
+        kx_1d = 2*np.pi * np.fft.fftfreq(Nx, d=dx)
+        ky_1d = 2*np.pi * np.fft.fftfreq(Ny, d=dy)
+        kz_1d = 2*np.pi * np.fft.fftfreq(Nz, d=dz)
+        kz, ky, kx = np.meshgrid(kz_1d, ky_1d, kx_1d, indexing='ij')  # shape (Nz,Ny,Nx)
+        
+        k_mag      = np.sqrt(kx**2 + ky**2 + kz**2)
+        k_mag_flat = k_mag.ravel()
+        
+        k_min      = np.min(k_mag_flat[k_mag_flat > 0])
+        k_max      = np.max(k_mag_flat)
+        
+        k_bins,_ = make_kbins(k_min,k_max,
+                              nbins=nbins,binning=binning)
             
+        # New: a utiliser ou non?
+        # Remplacer k_bins par le nouveau kk dans compute_E?
+        if nmin is not None:
+            #nmin = 20
+            k_bins = make_edges_adaptive(k_mag, nbins=nbins, nmin=nmin)
 
     # Gradients
     #dzall     = np.repeat(dz,Nz)
@@ -106,19 +131,36 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     N_v  = N_vu + N_vw
     N_w  = N_wu + N_ww
     if scalar is not None:
-        gradientsS = tl.compute_gradients(scalar, dx, dy, dz)
+        gradientsS = tl.compute_gradients(scalar, dx, dy, zall)
         (dscalar_dx, a, d, 
          dscalar_dy, b, e, 
          dscalar_dz, c, f) = gradientsS
         # Nonlinear term n= U ∇THLM (vector)
         N_scalar_u = Ub * dscalar_dx + Vb * dscalar_dy
         N_scalar_w = Wb * dscalar_dz
-#        N_scalar   = N_scalar_u + N_scalar_w
+        N_scalar   = N_scalar_u + N_scalar_w
         
     # Calculate Energy spectra
-    k,mode_count,E,T,Pi,E_k3,T_k3 =  compute_E(
-                                    k_bins,k_mag,U,N_u,
-                                    V=(V,N_v),W=(W,N_w))
+    field,N_field=U,N_u
+    fieldV,fieldW = (V,N_v),(W,N_w)
+    if scalar is not None:
+        field, N_field = scalar, N_scalar
+        fieldV, fieldW = None,None
+     
+
+    Eout  =  compute_E(k_bins,k_mag,
+                           field,N_field,
+                           V=fieldV,W=fieldW)
+    
+    # E_k3_mean = Eout['E_k']/Eout['dk'] #/(nx*ny*nz)
+    # TKE3D  = 0.5*(pow(tl.anomcalc(U),2.)
+    #             +pow(tl.anomcalc(V),2.)\
+    #             +pow(tl.anomcalc(W),2.))
+    # tl.checkvariance(Eout['k'],E_k3_mean,TKE3D,type='mean')
+    # stop
+    
+    k_new      =  Eout['k']
+    E_k3, T_k3 = Eout['E_k3'],Eout['T_k3']
     
         
     
@@ -133,7 +175,7 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
             kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
                                                  U, V, W, N_u, N_v, N_w, 
                                                  dx=dx,dy=dy,dz=dz,
-                                                 kk=k_bins, # To force the save k-axis
+                                                 kk=k_new, # To force the save k-axis
 #                                                 binning=binning, nbins=nbins,
                                                  Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
                                                  Nvh=(N_wu),Nvv=(N_ww),
@@ -148,10 +190,10 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                                                  filter_type='spectral_hz')
     
         else:
-            kk1, PI_k ,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(U,V,W,
-                                        N_u,N_v,N_w,
+            kk1, PI_k ,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
+                                        U, V, W, N_u, N_v, N_w,
                                         scalar=(scalar,N_scalar_u,N_scalar_w),
-                                        kk=k_bins,
+                                        kk=k_new,
                                         dx=dx,dy=dy,dz=dz)
         time2 = time.time()
         print('%s function took %0.3f ms' % ("Calculate PI_k2", (time2-time1)*1000.0))
@@ -178,10 +220,12 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
                                       binning=binning)
 
     
-    out = dict(k=k, 
-               k_shell_centers=k_shell_centers,
-               mode_count=mode_count,
-               E=E,T=T,Pi=Pi,
+    out = dict(k=k_new, 
+               dk=Eout['dk'],
+               k_shell_centers=Eout['k_shell_centers'],
+               k_shell_centers_geo=Eout['k_shell_centers_geo'],
+               mode_count=Eout['mode_count'],
+               E=Eout['E_k'],T=Eout['T_k'],Pi=Eout['Pi_k'],
                PI_k=PI_k, 
                PI_hh=PI_hh, PI_hv=PI_hv,
                PI_vh=PI_vh, PI_vv=PI_vv,
@@ -225,7 +269,12 @@ def compute_E(k,k_mag,U,N_u,
         E_k3 = np.abs(u_hat)**2 # *0.5
         T_k3 = -np.real(np.conj(u_hat) * N_u_hat)
 
-        
+
+    # Normlize to have a mean value in volume
+    N    = U.size
+    E_k3 = E_k3 / N   # m²/s²  (somme sur k = énergie cinétique massique moyenne)
+    T_k3 = T_k3 / N   # m²/s³
+    
     # Optionally zero out dealiased modes in outputs (they are already small/zero in u_hat_dealias)
     # But for consistency, mask E and T where dealias_mask==False
 
@@ -238,26 +287,55 @@ def compute_E(k,k_mag,U,N_u,
     T_flat = T_k3.ravel()
 
     # Compute bin indices once
-    inds = np.digitize(k_mag_flat, k) - 1
+    #inds = np.digitize(k_mag_flat, k) - 1
     
-    n_shells = len(k) - 1
+    n_shells = len(k) #- 1
     
-    # Keep only valid bins
-    valid = (inds >= 0) & (inds < n_shells)
+    # Keep only valid bins # old version
+    #valid = (inds >= 0) & (inds < n_shells)   
+    #inds = np.digitize(k_mag_flat, k) - 1
+
     
-    inds_valid = inds[valid]
-    E_valid = E_flat[valid]
-    T_valid = T_flat[valid]
+    # bin i  <=>  k[i-1] < |k| <= k[i]   (le bin 0 contient tout |k| <= k[0], mode k=0 inclus)
+    inds = np.searchsorted(k, k_mag_flat, side='left')
+
+    # on jette uniquement les modes |k| > k[-1] (hors de toute coupure)
+    valid = inds < n_shells
+
+    iv = inds[valid]
     
     # Fast vectorized accumulation
-    mode_count = np.bincount(inds_valid, minlength=n_shells)
-    E_k = np.bincount(inds_valid, weights=E_valid, minlength=n_shells)
-    T_k = np.bincount(inds_valid, weights=T_valid, minlength=n_shells)
+    #mode_count = np.bincount(inds_valid, minlength=n_shells)
+    #E_k = np.bincount(inds_valid, weights=E_flat[valid], minlength=n_shells)
+    #T_k = np.bincount(inds_valid, weights=T_flat[valid], minlength=n_shells)
+    
+    mode_count = np.bincount(iv, minlength=n_shells)
+    E_k   = np.bincount(iv, weights=E_flat[valid],     minlength=n_shells)
+    T_k   = np.bincount(iv, weights=T_flat[valid],     minlength=n_shells)
+    k_sum = np.bincount(iv, weights=k_mag_flat[valid], minlength=n_shells)
+    
+    # Calculate Pi transfer    
+    Pi_k = -np.cumsum(T_k)   # Pi_k[i] = -somme_{|k| <= k[i]} T  ==  PI_k2[i]
 
-    # Calculate Pi transfer
-    Pi_k = -np.cumsum(T_k)
+    k_mean = np.where(mode_count > 0, k_sum / np.maximum(mode_count, 1), np.nan)
+    # Spectre : énergie de la coquille / largeur de la coquille
+    dk = np.diff(k, prepend=np.nan)          # dk[0] = nan -> bin 0 exclu
+    E_spec = E_k / dk                        # m³/s²
+    
+    # Sauvegarder k_shell_centers
+    # --- bornes des coquilles ]k_lo[i], k[i]] ---
+    k_lo = np.concatenate(([np.nan], k[:-1]))      # bin 0 = tout ce qui est <= k[0]
 
-    return k,mode_count,E_k,T_k,Pi_k,E_k3,T_k3
+    dk = k - k_lo                                  # largeur (nan pour le bin 0)
+    k_shell_centers     = 0.5 * (k_lo + k)         # centre arithmétique
+    k_shell_centers_geo = np.sqrt(k_lo * k)        # centre géométrique (bins log)
+    
+
+#    return k_mean,mode_count,E_k,T_k,Pi_k,E_k3,T_k3,E_spec
+    return dict(k=k, mode_count=mode_count, E_k=E_k, T_k=T_k, Pi_k=Pi_k,
+            E_k3=E_k3, T_k3=T_k3, k_mean=k_mean, E_spec=E_spec,
+            dk=dk, k_shell_centers=k_shell_centers,
+            k_shell_centers_geo=k_shell_centers_geo)
 
 def compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,
                          scalar=None,
@@ -671,4 +749,61 @@ def _insert_zero_crossings(x, y):
     return np.array(x_new), np.array(y_new)
 
 
+def compute_buoyancy_from_thlm(thlm, rv, rt, p, rr=None, axis=(-2, -1)):
+    """
+    Variante quand les sorties Meso-NH archivées sont THLM (theta_l),
+    RVT (r_v) et RT (r_t = r_v + r_c (+ r_r)) plutôt que THT/RCT
+    directement (cas fréquent, variables conservées).
+ 
+    Passage direct theta_l -> theta_v en une seule expression, en
+    substituant theta = theta_l + (Lv/(cp*Pi))*r_c dans
+    theta_v = theta*(1+eps_v*rv-rl) et en négligeant les termes
+    croisés du 2e ordre (rc*rv, rc^2), négligeables en pratique :
+ 
+        theta_v ~ theta_l*(1+eps_v*rv) + rc*(Lv/(cp*Pi) - theta_l)
+ 
+    Evite de matérialiser theta comme tableau intermédiaire (plus
+    rapide, une seule passe sur les données).
+ 
+    Paramètres
+    ----------
+    thlm : ndarray (..., nz, ny, nx)
+        Température potentielle liquide (Meso-NH: THLM).
+    rv : ndarray, même forme
+        Rapport de mélange en vapeur d'eau (Meso-NH: RVT).
+    rt : ndarray, même forme
+        Rapport de mélange en eau totale (Meso-NH: RT = RVT+RCT(+RRT)).
+    p : ndarray, même forme (ou broadcastable, ex. profil (nz,1,1))
+        Pression (Meso-NH: PABST), en Pa, utilisée pour l'Exner.
+    rr : ndarray ou None
+        A fournir seulement si rt n'inclut PAS déjà la pluie et que tu
+        veux l'ajouter à part; sinon laisser None (rc = rt - rv suffit).
+    axis : tuple
+        Axes horizontaux pour la moyenne (cf. compute_buoyancy_stcu).
+ 
+    Retour
+    ------
+    b : ndarray, même forme que thlm
+        Champ de flottabilité Phi.
+    """
+    
+    G = 9.81  # m/s^2
+    EPS_V = 0.61  # ~ Rv/Rd - 1, coefficient de virtualisation
+    LV = 2.5e6  # J/kg, chaleur latente de vaporisation
+    CP = 1004.0  # J/kg/K
+    RD_CP = 0.2857  # Rd/cp
+    P00 = 1.0e5  # Pa, pression de référence pour l'Exner
+    
+    
+    exner = (p / P00) ** RD_CP
+    rc = rt - rv
+    if rr is not None:
+        rc = rc - rr  # au cas où rt n'inclurait pas la pluie séparément
+ 
+    theta_v = thlm * (1.0 + EPS_V * rv) + rc * (LV / (CP * exner) - thlm)
+ 
+    theta_v_mean = np.mean(theta_v, axis=axis, keepdims=True)
+    b = G * (theta_v - theta_v_mean) / theta_v_mean
+ 
+    return b
 

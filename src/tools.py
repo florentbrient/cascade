@@ -468,11 +468,11 @@ def compute_gradients(u, dx, dy, z, v=None, w=None):
 
 
 def checkvariance(k,E,field,type='var'):
-    varspec = np.trapz(E,x=k)
+    varspec = np.trapz(E[~np.isnan(E)],x=k[~np.isnan(E)])
     if type=='mean':
-        varfield= np.mean(field)
+        varfield= np.nanmean(field)
     else:
-        varfield= np.var(field)
+        varfield= np.nanvar(field)
     print('variance Spectra ',varspec)
     print('variance Field ',varfield)
     perc=100*varspec/varfield
