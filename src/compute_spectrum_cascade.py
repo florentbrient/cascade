@@ -354,20 +354,24 @@ if coarsegraining:
 ################################################
 #    Calculate 2D spectra flux and cascade     #
 ################################################
-var_to_plot = ['TKE',result_b.keys()]
+var_to_plot = ['TKE']+list(result_b.keys())[:]
 E2D,Pi2D = {},{}
 for var in var_to_plot:
-    E2D[var]  = np.zeros((nz,nbins))
-    Pi2D[var] = np.zeros((nz,nbins))
+    E2D[var]  = np.zeros((nz,nbins+1))
+    Pi2D[var] = np.zeros((nz,nbins+1))
 for idx,zi in enumerate(z_new):
+    
     # TKE full
     winds =  (UT_new[idx,:,:], VT_new[idx,:,:], WT_new[idx,:,:])
     result2D = stl.compute_spectral_transfer(
         winds, 
         dx=dx, dy=dy,
         binning='log',nbins=nbins)
-    E2D['TKE'] =result2D['Eout']['E_spec']
-    Pi2D['TKE']=result2D['Eout']['Pi_k']
+    E2D['TKE'][idx,:] =result2D['Eout']['E_spec']
+    Pi2D['TKE'][idx,:]=result2D['Eout']['Pi_k']
+    
+    if idx==0:
+        k2D = result2D['Eout']['k']
 
     for scalar in table2.keys():
         if not any(text in scalar for text in ('UT', 'VT', 'WT')):
@@ -405,21 +409,24 @@ for var in var_to_plot:
         r = result.copy()
     else:
         r = result_b[var].copy()
+        
+    rout = r['Eout']
     # Save file    
     ds = xr.Dataset(
         {
-        "E": (("kc",), r['E']),
-        "T": (("kc",), r['T']),
-        "Pi": (("kc",), r['Pi']),
+        "E": (("kc",), rout['E_k']),
+        "T": (("kc",), rout['T_k']),
+        "Pi": (("kc",), rout['Pi_k']),
         },
         coords={"kv":r['k'], 
-                "kc":r['k_shell_centers'],
+                "kc":rout['k_shell_centers'],
                 "kk2":r['kk2'],
                 "z" :z_new,
                 "kperp":r['kperp'],
                 "kpara":r['kpara'],
                 "nx":nx,"ny":ny,"nz":nz,
-                "zlist":idxzlist
+                "zlist":idxzlist,
+                "k2D":k2D
                 }
     )
     
@@ -433,6 +440,15 @@ for var in var_to_plot:
         ds["PI_vh"] = (("k",), r['PI_vh'])
         ds["PI_vv"] = (("k",), r['PI_vv'])
     
+    ds["E_spec"]   = (("k",), rout['E_spec'])
+    if rout['E_h_spec'] is not None:
+        ds["E_h_spec"] = (("k",), rout['E_h_spec'])
+        ds["E_v_spec"] = (("k",), rout['E_v_spec'])
+        ds["E_h_k"]    = (("k",), rout['E_h_k'])
+        ds["E_v_k"]    = (("k",), rout['E_v_k'])
+        ds["Pi_h_k"]   = (("k",), rout['Pi_h_k'])
+        ds["Pi_v_k"]   = (("k",), rout['Pi_v_k'])
+
     if r['PI_hz'] is not None:
         ds["PI_hz"]  = (("kk2",), r['PI_hz'])
         
