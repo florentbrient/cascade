@@ -6,5 +6,5 @@ sens: FIRZ4
 prefix: FIRZ4
 OUT: OUT
 nc4: nc
-pathsave: /lustre/fswork/projects/rech/whl/rces071/Github/spectrum_analysis/data/spectra/
-pathfig: /lustre/fswork/projects/rech/whl/rces071/Github/spectrum_analysis/figures/
+pathsave: /lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/spectra/
+pathfig: /lustre/fswork/projects/rech/whl/rces071/Github/cascade/figures/

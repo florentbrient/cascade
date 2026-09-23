@@ -166,7 +166,6 @@ def interp_to_uniform_z(U, z_old, dz_new=10.0):
     U_new = []
     for ij,tmp in enumerate(U):
         # Define interpolation function for each component along the vertical axis
-        print(tmp.shape)
         fU = interp1d(z_old, tmp, axis=0, kind='linear', bounds_error=False, fill_value='extrapolate')
         U_new.append(fU(z_new))
         

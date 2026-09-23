@@ -6,5 +6,5 @@ sens: FIRZ4
 prefix: FIRZ4
 OUT: OUT
 nc4: nc
-pathsave: /home/fbrient/GitHub/spectrum_analysis/data/spectra/
-pathfig: /home/fbrient/GitHub/spectrum_analysis/figures/ 
+pathsave: /home/fbrient/GitHub/cascade/data/
+pathfig: /home/fbrient/GitHub/cascade/figures/ 

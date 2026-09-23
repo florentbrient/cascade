@@ -27,8 +27,10 @@ from coarse_graining_flux import compute_Pi_2D_map
 # Test on local file (by default: False)
 testlocal= True
 # Run Filtered cascade (by default: True)
-Filter3D = True
-    
+Filter3D = False
+coarsegraining = False
+
+
 if testlocal:
     file = 'FIRZ4.1.V0001.OUT.003.nc' #'IHOP0.1.NWV01.OUT.013.nc' #'FIRZ4.1.V0001.OUT.003.nc'
     fileinfo  = '../infos/info_run_Dell_FIRZ4.txt' #'../infos/info_run_Dell_IHOPNW.txt' #../infos/info_run_Dell_FIRZ4.txt'
@@ -115,7 +117,16 @@ table = (UT, VT, WT, THLM, RNPM, RVT, RCT, PABST, buoyancy)
 table_new, z_new = tl.interp_to_uniform_z(table, zpbl, dz_new=dz_new)
 (UT_new, VT_new, WT_new, THLM_new, RNPM_new, RVT_new, RCT_new, PABST_new, buoyancy_new) = table_new
 nx,ny,nz = len(x),len(y),len(z_new)
-print(nx,ny,nz,UT_new.shape)
+
+        
+# Create new dictionary saving values
+globals_copy = list(globals().items())
+table2 = {
+    nom: obj 
+    for nom, obj in globals_copy 
+    if any(obj is valeur for valeur in table_new)
+}
+
 
 nbins = 100
 
@@ -129,39 +140,41 @@ nmin = 20
 # Compute spectra and cascade from 3D fields
 winds =  (UT_new, VT_new, WT_new)
 result = stl.compute_spectral_transfer(
-    winds, 
-    dx=dx, dy=dy, dz=dz_new,
+    winds, P=PABST_new, B=buoyancy_new,
+    dx=dx, dy=dy, dz=dz_new,z=z_new,
     binning='log',nbins=nbins, nmin=nmin)
 
-# Compute spectra and cascade for Buoyancy flux
-
-result_b = stl.compute_spectral_transfer(
-    winds, scalar=buoyancy_new,
-    dx=dx, dy=dy, dz=dz_new,
-    binning='log',nbins=nbins, nmin=nmin)
-
-result_c = stl.compute_spectral_transfer(
-    winds, scalar=THLM_new,
-    dx=dx, dy=dy, dz=dz_new,
-    binning='log',nbins=nbins, nmin=nmin)
-
-result_d = stl.compute_spectral_transfer(
-    winds, scalar=PABST_new,
-    dx=dx, dy=dy, dz=dz_new,
-    binning='log',nbins=nbins, nmin=nmin)
+# Compute spectra and cascade for all variables in table2:
+result_b ={}
+for scalar in table2.keys():
+    if not any(text in scalar for text in ('UT', 'VT', 'WT')):
+        print(scalar)
+        # Buoyancy flux
+        tmp = stl.compute_spectral_transfer(
+            winds, scalar=table2[scalar],
+            dx=dx, dy=dy, dz=dz_new,
+            binning='log',nbins=nbins, nmin=nmin)
+        result_b[scalar] = tmp
+        del tmp
+    # What do you want to save:
+        
+        
 
 # For information, Egality is:
 # Pi = PI_3d*(nx*ny*nznew)
 
 # Check equality between the spectra energy and the field
-k,kc = result['k'],result['k_shell_centers']
-dk   = result['dk']
-E,T  = result['E'],result['T']
+k,kc = result['Eout']['k'],result['Eout']['k_shell_centers']
+dk   = result['Eout']['dk']
+E,T  = result['Eout']['E_k'],result['Eout']['T_k']
 E_k3_mean = E/dk #/(nx*ny*nz)
 TKE3D  = 0.5*(pow(tl.anomcalc(UT_new),2.)
             +pow(tl.anomcalc(VT_new),2.)\
             +pow(tl.anomcalc(WT_new),2.))
 tl.checkvariance(kc,E_k3_mean,TKE3D,type='mean')
+
+
+cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Eout']['Pi_k'], kPBL, method="trapz")
 
 
 # Eperp_k3_mean = result['Eperp']/np.diff(k)/(nx*ny*nz)
@@ -192,8 +205,8 @@ if Filter3D:
     Nk,Nzz = len(k),len(idxzlist)
     Ek_BT,Tk_BT,Pi_BT = [np.zeros((Nk,Nzz)) for ij in range(3)]
     Ek_TB,Tk_TB,Pi_TB = [np.zeros((Nk,Nzz)) for ij in range(3)]
-    PIhh_BT,PIhv_BT,PIvh_BT,PIvv_BT = [np.zeros((Nk,Nzz)) for ij in range(5)]
-    PIhh_TB,PIhv_TB,PIvh_TB,PIvv_TB = [np.zeros((Nk,Nzz)) for ij in range(5)]
+    PIhh_BT,PIhv_BT,PIvh_BT,PIvv_BT = [np.zeros((Nk,Nzz)) for ij in range(4)]
+    PIhh_TB,PIhv_TB,PIvh_TB,PIvv_TB = [np.zeros((Nk,Nzz)) for ij in range(4)]
 
     
     resultplus1,resultminus1,resultplus2 ={},{},{}
@@ -201,6 +214,7 @@ if Filter3D:
     for ij,cutoff in enumerate(idxzfilter):
         Uh,Vh,Wh    = UT_new.copy(),VT_new.copy(),WT_new.copy()
         Uh2,Vh2,Wh2 = UT_new.copy(),VT_new.copy(),WT_new.copy()
+        stcut       = str(cutoff)
 
         # zero out above 75% along z
         Uh[cutoff:, :, :] = 0
@@ -213,11 +227,11 @@ if Filter3D:
         Wh2[:cutoff, :, :] = 0
     
         # Compute spectra and cascade from truncated 3D fields
-        resultplus1[str(cutoff)]  = stl.compute_spectral_transfer(
+        resultplus1[stcut]  = stl.compute_spectral_transfer(
             (Uh,Vh,Wh),
             dx=dx, dy=dy, dz=dz_new,
             binning='log',nbins=nbins, nmin=nmin)
-        resultminus1[str(cutoff)] = stl.compute_spectral_transfer(
+        resultminus1[stcut] = stl.compute_spectral_transfer(
             (Uh2,Vh2,Wh2),
             dx=dx, dy=dy, dz=dz_new,
             binning='log',nbins=nbins, nmin=nmin)        
@@ -234,20 +248,19 @@ if Filter3D:
         
         
         # Save important variables
-        Ek_BT[:,ij],Tk_BT[:,ij],Pi_BT[:,ij] = [resultplus1[ijk] for ijk in ['E_k','T_k','Pi_k']]
+        Ek_BT[:,ij],Tk_BT[:,ij],Pi_BT[:,ij] = [resultplus1[stcut][ijk] for ijk in ['E','T','Pi']]
         PIhh_BT[:,ij],PIhv_BT[:,ij],PIvh_BT[:,ij],PIvv_BT[:,ij] = \
-            [resultplus1[ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
+            [resultplus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
             
         
-        Ek_TB[:,ij],Tk_TB[:,ij],Pi_TB[:,ij] = [resultminus1[ijk] for ijk in ['E_k','T_k','Pi_k']]
+        Ek_TB[:,ij],Tk_TB[:,ij],Pi_TB[:,ij] = [resultminus1[stcut][ijk] for ijk in ['E','T','Pi']]
         PIhh_TB[:,ij],PIhv_TB[:,ij],PIvh_TB[:,ij],PIvv_TB[:,ij] = \
-            [resultminus1[ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
+            [resultminus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
 
 
         
     
     # Integrate cascade
-    cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Pi'], kPBL, method="trapz")
     PinegBT,PinegTB = np.zeros(len(resultplus1)),np.zeros(len(resultplus1))
     for ij,key in enumerate(resultplus1):
         Pi = resultplus1[key]['Pi']
@@ -261,8 +274,6 @@ if Filter3D:
 ################################################
 #    Calculate coarse graining                 #
 ################################################
-
-coarsegraining = True
 if coarsegraining:
     k_cuts = k
     Pi_z_k = cgf.compute_coarse_grained_flux_profile(
@@ -343,7 +354,33 @@ if coarsegraining:
 ################################################
 #    Calculate 2D spectra flux and cascade     #
 ################################################
+var_to_plot = ['TKE',result_b.keys()]
+E2D,Pi2D = {},{}
+for var in var_to_plot:
+    E2D[var]  = np.zeros((nz,nbins))
+    Pi2D[var] = np.zeros((nz,nbins))
+for idx,zi in enumerate(z_new):
+    # TKE full
+    winds =  (UT_new[idx,:,:], VT_new[idx,:,:], WT_new[idx,:,:])
+    result2D = stl.compute_spectral_transfer(
+        winds, 
+        dx=dx, dy=dy,
+        binning='log',nbins=nbins)
+    E2D['TKE'] =result2D['Eout']['E_spec']
+    Pi2D['TKE']=result2D['Eout']['Pi_k']
 
+    for scalar in table2.keys():
+        if not any(text in scalar for text in ('UT', 'VT', 'WT')):
+            tmp = table2[scalar]
+            resulttmp = stl.compute_spectral_transfer(winds, 
+                                                      dx=dx, dy=dy,
+                                                      scalar=tmp[idx,:,:],
+                                                      nbins=nbins)
+            
+            E2D[scalar][idx,:] =resulttmp['Eout']['E_spec']
+            Pi2D[scalar][idx,:]=resulttmp['Eout']['Pi_k']
+    
+    
 
 
 
@@ -356,91 +393,90 @@ if coarsegraining:
 # Take relevant information from the name file
 tab = file.split('/')[-1].split('.')
 prefix,vinfo, tinfo = tab[0],tab[2],tab[4]
-file_netcdf  = '_'.join(['Spectra',prefix,vinfo,tinfo])
+file_netcdf  = '_'.join(['Cascade',prefix,vinfo,tinfo])
+file_netcdf += "_XXX"
 file_netcdf2 = pathsave+file_netcdf+'.nc'
 
-# Simplification to write netcdf file
-r = result.copy()
-
-# Save file    
-ds = xr.Dataset(
-    {
-    "E": (("kc",), r['E']),
-    "T": (("kc",), r['T']),
-    "Pi": (("kc",), r['Pi']),
-    },
-    coords={"kv":r['k'], 
-            "kc":r['k_shell_centers'],
-            "kk2":r['kk2'],
-            "z" :z_new,
-            "kperp":r['kperp'],
-            "kpara":r['kpara'],
-            "nx":nx,"ny":ny,"nz":nz,
-            "zlist":idxzlist
-            }
-)
-
-ds["PBL"] = PBLheight  # A single value
-
-if r['PI_k'] is not None:
-    ds["PI_k"]  = (("k",), r['PI_k'])
-    ds["PI_hh"] = (("k",), r['PI_hh'])
-    ds["PI_hv"] = (("k",), r['PI_hv'])
-    ds["PI_vh"] = (("k",), r['PI_vh'])
-    ds["PI_vv"] = (("k",), r['PI_vv'])
-
-if r['PI_hz'] is not None:
-    ds["PI_hz"]  = (("kk2",), r['PI_hz'])
+for var in var_to_plot:
+    file_netcdf3= file_netcdf2.replace('XXX',var)
     
-if r['Pi_perp'] is not None:
-    ds["Eperp"]   = (("kperp",), r['Eperp'])
-    ds["Tperp"]   = (("kperp",), r['Tperp'])
-    ds["Piperp"]  = (("kperp",), r['Piperp'])
-    ds["Epara"]   = (("kpara",), r['Epara'])
-    ds["Tpara"]   = (("kpara",), r['Tpara'])
-    ds["Pipara"]  = (("kpara",), r['Pipara'])
+    # Simplification to write netcdf file
+    if var=='TKE':
+        r = result.copy()
+    else:
+        r = result_b[var].copy()
+    # Save file    
+    ds = xr.Dataset(
+        {
+        "E": (("kc",), r['E']),
+        "T": (("kc",), r['T']),
+        "Pi": (("kc",), r['Pi']),
+        },
+        coords={"kv":r['k'], 
+                "kc":r['k_shell_centers'],
+                "kk2":r['kk2'],
+                "z" :z_new,
+                "kperp":r['kperp'],
+                "kpara":r['kpara'],
+                "nx":nx,"ny":ny,"nz":nz,
+                "zlist":idxzlist
+                }
+    )
     
-if Filter3D:
-    ds["EkBT"] = (("k", "zlist"), Ek_BT)
-    ds["TkBT"] = (("k", "zlist"), Tk_BT)
-    ds["PiBT"] = (("k", "zlist"), Pi_BT)
-    ds["PIhhBT"] = (("k", "zlist"), PIhh_BT)
-    ds["PIhvBT"] = (("k", "zlist"), PIhv_BT)
-    ds["PIvhBT"] = (("k", "zlist"), PIvh_BT)
-    ds["PIvvBT"] = (("k", "zlist"), PIvv_BT)
-    ds["EkTB"] = (("k", "zlist"), Ek_TB)
-    ds["TkTB"] = (("k", "zlist"), Tk_TB)
-    ds["PiTB"] = (("k", "zlist"), Pi_TB)
-    ds["PIhhTB"] = (("k", "zlist"), PIhh_TB)
-    ds["PIhvTB"] = (("k", "zlist"), PIhv_TB)
-    ds["PIvhTB"] = (("k", "zlist"), PIvh_TB)
-    ds["PIvvTB"] = (("k", "zlist"), PIvv_TB)
-    ds["PinegBT"] = (("zlist",),PinegBT)
-    ds["PinegTB"] = (("zlist",),PinegTB)
-
-
-# Save to NetCDF (overwrites if exists)
-file_netcdf2=pathsave+file_netcdf+'.nc'
-ds.to_netcdf(file_netcdf2)
-
-# Save RCT
-if nvar is not None:
-    ds["E1dr_"+nvar0] = (("kv", "z"), Evr)
-    ds["E1da_"+nvar0] = (("kvazi", "z"), Eva)
+    ds["PBL"]   = PBLheight  # A single value
+    ds["Pineg"] = cascadeneg
     
-ds["E1dr_WT"] = (("kv", "z"), Ewr)
-ds["E1da_WT"] = (("kvazi", "z"), Ewa)
-ds["E1dr_THL"] = (("kv", "z"), Ethr)
-ds["E1da_THL"] = (("kvazi", "z"), Etha)
+    if r['PI_k'] is not None:
+        ds["PI_k"]  = (("k",), r['PI_k'])
+        ds["PI_hh"] = (("k",), r['PI_hh'])
+        ds["PI_hv"] = (("k",), r['PI_hv'])
+        ds["PI_vh"] = (("k",), r['PI_vh'])
+        ds["PI_vv"] = (("k",), r['PI_vv'])
     
-# Add a scalar variable (e.g., a global attribute)
-for index in indLWP.keys():
-    indexLWP = index+'_'+nvar
-    ds[indexLWP] = indLWP[index]  # A single value
+    if r['PI_hz'] is not None:
+        ds["PI_hz"]  = (("kk2",), r['PI_hz'])
+        
+    if r['Piperp'] is not None:
+        ds["Eperp"]   = (("kperp",), r['Eperp'])
+        ds["Tperp"]   = (("kperp",), r['Tperp'])
+        ds["Piperp"]  = (("kperp",), r['Piperp'])
+        ds["Epara"]   = (("kpara",), r['Epara'])
+        ds["Tpara"]   = (("kpara",), r['Tpara'])
+        ds["Pipara"]  = (("kpara",), r['Pipara'])
+        
+    if Filter3D:
+        ds["EkBT"] = (("k", "zlist"), Ek_BT)
+        ds["TkBT"] = (("k", "zlist"), Tk_BT)
+        ds["PiBT"] = (("k", "zlist"), Pi_BT)
+        ds["PIhhBT"] = (("k", "zlist"), PIhh_BT)
+        ds["PIhvBT"] = (("k", "zlist"), PIhv_BT)
+        ds["PIvhBT"] = (("k", "zlist"), PIvh_BT)
+        ds["PIvvBT"] = (("k", "zlist"), PIvv_BT)
+        ds["EkTB"] = (("k", "zlist"), Ek_TB)
+        ds["TkTB"] = (("k", "zlist"), Tk_TB)
+        ds["PiTB"] = (("k", "zlist"), Pi_TB)
+        ds["PIhhTB"] = (("k", "zlist"), PIhh_TB)
+        ds["PIhvTB"] = (("k", "zlist"), PIhv_TB)
+        ds["PIvhTB"] = (("k", "zlist"), PIvh_TB)
+        ds["PIvvTB"] = (("k", "zlist"), PIvv_TB)
+        ds["PinegBT"] = (("zlist",),PinegBT)
+        ds["PinegTB"] = (("zlist",),PinegTB)
+    
+    if coarsegraining:
+        ds["PicoarSFS"] = (("k","z"),Pi_z_k['sfs'])
+        ds["PicoarNAI"] = (("k","z"),Pi_z_k['naive'])
+        ds = ds.assign_coords(Lz=ell_z_list)
+        ds = ds.assign_coords(Lh=ell_h_list)
+        ds["Pi_map"]    = (("Lh","Lz","z"),Pi_map)
+    
+    ds['E2D']  = (("z","k2D"),E2D[scalar]) 
+    ds['Pi2D'] = (("z","k2D"),Pi2D[scalar])
+    
+    # Save to NetCDF (overwrites if exists)
+    ds.to_netcdf(file_netcdf3)
+    
+    del r,file_netcdf3
 
-# Add spectra of LWP
-ds["E1dr_"+nvar] = (("kv",), ELWPr)
-ds["E1da_"+nvar] = (("kvazi",), ELWPa)
 
 
 

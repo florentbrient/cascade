@@ -44,8 +44,10 @@ def make_edges_adaptive(k_mag, nbins=80, nmin=20):
     return kv[np.array(keep_idx) - 1]
 
 
-def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
-                              scalar=None,
+def compute_spectral_transfer(winds, 
+                              dx=50.0, dy=50.0, dz=10.0,
+                              z=None,
+                              scalar=None,P=None,B=None,
                               windsb=None,windsc=None,
                               norm='ortho', dealiasing_23=False,
                               binning='log', k_bins=None,
@@ -75,17 +77,30 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     """
 
     # Retrieve winds
-    U, V, W  = winds
-    Ub,Vb,Wb = winds
-    Uc,Vc,Wc = winds
-    if windsb is not None:
-        Ub,Vb,Wb = windsb
-    if windsc is not None:
-        Uc,Vc,Wc = windsc
+    if len(winds)==3:
+        U, V, W  = winds
+        Ub,Vb,Wb = winds
+        Uc,Vc,Wc = winds
+        if windsb is not None:
+            Ub,Vb,Wb = windsb
+        if windsc is not None:
+            Uc,Vc,Wc = windsc
+    else:
+        U, V  = winds
+        Ub,Vb = winds
+        Uc,Vc = winds
+        W,Wc  = None,None
+        fieldW= None
+        Wb    = 0
 
     # shapes
-    Nz, Ny, Nx = U.shape
-    assert V.shape == U.shape and W.shape == U.shape
+    if len(U.shape)==3:
+        Nz, Ny, Nx = U.shape
+        zall      = np.arange(0,Nz)*dz
+    else:
+        Ny, Nx = U.shape
+        Nz,zall = None,None
+    assert V.shape == U.shape
     if scalar is not None:
         assert scalar.shape == U.shape
     
@@ -94,8 +109,13 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
         # build wavenumber arrays (rad/m)
         kx_1d = 2*np.pi * np.fft.fftfreq(Nx, d=dx)
         ky_1d = 2*np.pi * np.fft.fftfreq(Ny, d=dy)
-        kz_1d = 2*np.pi * np.fft.fftfreq(Nz, d=dz)
-        kz, ky, kx = np.meshgrid(kz_1d, ky_1d, kx_1d, indexing='ij')  # shape (Nz,Ny,Nx)
+        
+        if Nz is not None:
+            kz_1d = 2*np.pi * np.fft.fftfreq(Nz, d=dz)
+            kz, ky, kx = np.meshgrid(kz_1d, ky_1d, kx_1d, indexing='ij')  # shape (Nz,Ny,Nx)
+        else:
+            ky, kx = np.meshgrid(ky_1d, kx_1d, indexing='ij')  # shape (Nz,Ny,Nx)
+            kz = np.zeros(ky.shape)
         
         k_mag      = np.sqrt(kx**2 + ky**2 + kz**2)
         k_mag_flat = k_mag.ravel()
@@ -114,7 +134,6 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
 
     # Gradients
     #dzall     = np.repeat(dz,Nz)
-    zall      = np.arange(0,Nz)*dz
     gradients = tl.compute_gradients(Uc, dx, dy, zall, v=Vc, w=Wc)
     (du_dx, dv_dx, dw_dx, 
      du_dy, dv_dy, dw_dy, 
@@ -122,11 +141,15 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     
     # nonlinear term N = u · ∇u (vector)
     N_uu = Ub * du_dx + Vb * du_dy
-    N_uw = Wb * du_dz
     N_vu = Ub * dv_dx + Vb * dv_dy
-    N_vw = Wb * dv_dz
-    N_wu = Ub * dw_dx + Vb * dw_dy
-    N_ww = Wb * dw_dz
+    N_uw,N_vw,N_ww,N_wu = 0,0,0,0
+    if dw_dx is not None:
+        N_wu = Ub * dw_dx + Vb * dw_dy
+    if du_dz is not None:
+        N_uw = Wb * du_dz
+        N_vw = Wb * dv_dz
+        N_ww = Wb * dw_dz
+
     N_u  = N_uu + N_uw
     N_v  = N_vu + N_vw
     N_w  = N_wu + N_ww
@@ -137,20 +160,40 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
          dscalar_dz, c, f) = gradientsS
         # Nonlinear term n= U ∇THLM (vector)
         N_scalar_u = Ub * dscalar_dx + Vb * dscalar_dy
-        N_scalar_w = Wb * dscalar_dz
-        N_scalar   = N_scalar_u + N_scalar_w
+        N_scalar_w = 0
+        if dscalar_dz is not None:
+            N_scalar_w = Wb * dscalar_dz
         
     # Calculate Energy spectra
-    field,N_field=U,N_u
-    fieldV,fieldW = (V,N_v),(W,N_w)
+    field,N_field = U,N_u
+    fieldV        = (V,N_v)
+    if W is not None:
+        fieldW        = (W,N_w)
     if scalar is not None:
-        field, N_field = scalar, N_scalar
+        field, N_field = scalar, N_scalar_u+N_scalar_w
         fieldV, fieldW = None,None
-     
+         
+    Eout  =  compute_E_v2(k_bins,k_mag,
+                            field,N_field,
+                            V=fieldV,W=fieldW,
+                            P=P,k_z=kz)
+    
+    Eout_layer = None
+    if Nz is not None:
+        Eout_layer = compute_E_layer(k_bins, dx, dy,
+                                     U, V, W,                       # (nz, ny, nx) physical fields
+                                     N_u, N_v, N_w,                 # u·∇u components (physical, dealiased)
+                                     P=P,B=B,dz=dz)
 
-    Eout  =  compute_E(k_bins,k_mag,
-                           field,N_field,
-                           V=fieldV,W=fieldW)
+    # print(Eout.keys())
+    # plt.figure()
+    # plt.semilogx(Eout['k'],Eout['Pi_k'],'k')
+    # plt.semilogx(Eout['k'],Eout['Pi_h_k'],'r')
+    # plt.semilogx(Eout['k'],Eout['Pi_v_k'],'b')
+    # plt.figure()
+    # plt.loglog(Eout['k'],Eout['E_spec'],'k')
+    # plt.loglog(Eout['k'],Eout['E_h_spec'],'r')
+    # plt.loglog(Eout['k'],Eout['E_v_spec'],'b')
     
     # E_k3_mean = Eout['E_k']/Eout['dk'] #/(nx*ny*nz)
     # TKE3D  = 0.5*(pow(tl.anomcalc(U),2.)
@@ -168,7 +211,7 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     PI_k, PI_hh, PI_hv, PI_vh, PI_vv = [None for ij in range(5)]
     PI_3d, PI_hz = [None for ij in range(2)]
     
-    if windsb is None and windsc is None:
+    if windsb is None and windsc is None and Nz is not None:
         time1 = time.time()
         if scalar is None:
     
@@ -212,27 +255,343 @@ def compute_spectral_transfer(winds, dx=50.0, dy=50.0, dz=10.0,
     k_center_perp, E_perp, T_perp, Pi_perp, \
     k_center_para, E_para, T_para, Pi_para = [None for ij in range(8)]
     
-    k_center_perp, E_perp, T_perp, Pi_perp,\
-    k_center_para, E_para, T_para, Pi_para = spectral_cyl_plane(E_k3, T_k3,
-                                      kx, ky, kz, 
-                                      n_bins_perp=nbins, 
-                                      n_bins_para=nbins, 
-                                      binning=binning)
+    if Nz is not None:
+        #print(kx.shape,kz.shape,E_k3.shape)
+        k_center_perp, E_perp, T_perp, Pi_perp,\
+        k_center_para, E_para, T_para, Pi_para = spectral_cyl_plane(E_k3, T_k3,
+                                          kx, ky, kz, 
+                                          n_bins_perp=nbins, 
+                                          n_bins_para=nbins, 
+                                          binning=binning)
 
     
     out = dict(k=k_new, 
-               dk=Eout['dk'],
-               k_shell_centers=Eout['k_shell_centers'],
-               k_shell_centers_geo=Eout['k_shell_centers_geo'],
-               mode_count=Eout['mode_count'],
-               E=Eout['E_k'],T=Eout['T_k'],Pi=Eout['Pi_k'],
+               # dk=Eout['dk'],
+               # k_shell_centers=Eout['k_shell_centers'],
+               # k_shell_centers_geo=Eout['k_shell_centers_geo'],
+               # mode_count=Eout['mode_count'],
+               # E=Eout['E_k'],T=Eout['T_k'],Pi=Eout['Pi_k'],
+               # Eh=Eout['E_h_k'],Ev=Eout['E_v_k'],
+               # E_spec=Eout['E_spec'],Eh_spec=Eout['E_h_spec'],Ev_spec=Eout['E_v_spec'],
+               # Pih=Eout['Pi_h_k'],Piv=Eout['Pi_v_k'],
+               # Phiv=Eout['phi_v_k'],
                PI_k=PI_k, 
                PI_hh=PI_hh, PI_hv=PI_hv,
                PI_vh=PI_vh, PI_vv=PI_vv,
                kk2=kk2, PI_hz=PI_hz,
                kperp=k_center_perp, Eperp=E_perp, Tperp=T_perp, Piperp=Pi_perp,
-               kpara=k_center_para, Epara=E_para, Tpara=T_para, Pipara=Pi_para)
+               kpara=k_center_para, Epara=E_para, Tpara=T_para, Pipara=Pi_para,
+               Eout=Eout, Eout_layer=Eout_layer)
     return out
+
+
+# ----------------------------------------------------------------------
+# helpers
+# ----------------------------------------------------------------------
+def _d_dz(field, z, dz):
+    """Vertical derivative, 2nd order centered, one-sided at walls.
+    z: 1D array of levels (len = field.shape[0]) or None (uniform dz)."""
+    f = np.empty_like(field)
+    if z is not None:
+        dzc = (z[2:] - z[:-2]).reshape(-1, 1, 1)
+        dz0, dz1 = (z[1] - z[0]), (z[-1] - z[-2])
+    else:
+        if dz is None:
+            raise ValueError("provide either z (1D, len nz) or dz")
+        dzc = (2 * dz)
+        dz0 = dz1 = dz
+    f[1:-1] = (field[2:] - field[:-2]) / dzc
+    f[0]    = (field[1]  - field[0])  / dz0
+    f[-1]   = (field[-1] - field[-2]) / dz1
+    return f
+
+
+def shells_kh(kh_bins, kx_2d, ky_2d):
+    """Boolean masks (ny, nx) per shell, on the FULL fftn spectral grid.
+    bin i <=> lo[i] < kh <= kh_bins[i] ; bin 0 includes kh = 0."""
+    kh = np.sqrt(kx_2d**2 + ky_2d**2)
+    assert kh.ndim == 2, f"kh must be 2D (ky, nx), got {kh.shape}"
+    lo = np.concatenate(([0.0], kh_bins[:-1]))
+    return [(kh > lo[i]) & (kh <= khi) for i, khi in enumerate(kh_bins)]
+
+def _rfft_weights(ky_2d, kx_2d): # Not used
+    """Weight 2 for kx>0 modes (hermitian half-plane), 1 on kx=0 column.
+    Returns 2D array (ny, nxh), constant along ky."""
+    w = np.where(kx_2d[0, :] == 0.0, 1.0, 2.0)   # (nxh,)
+    return np.broadcast_to(w, ky_2d.shape).copy()
+
+
+def _bin_shells(A3, shell_masks, layer_norm=1.0):
+    """A3: (nz, ny, nx) real-valued. Sum per shell, then average over z.
+    No hermitian weights needed with full fftn."""
+    out = np.zeros(len(shell_masks))
+    for i, m in enumerate(shell_masks):
+        if m.any():
+            out[i] = A3[:, m].sum() / layer_norm
+    return out
+
+
+# ----------------------------------------------------------------------
+# main routine
+# ----------------------------------------------------------------------
+def compute_E_layer(kh_bins, dx, dy,
+                    U, V, W,                # (nz, ny, nx) physical, w=0 at walls
+                    N_u, N_v, N_w,          # u·∇u components (physical, dealiased)
+                    P=None,                 # pressure (grid of U)
+                    B=None,                 # buoyancy
+                    z=None, dz=None,        # vertical levels or uniform spacing
+                    zw=None,                # optional: w-levels if staggered
+                    norm='ortho'):
+    """
+    LES layer version: periodic in x,y (rFFT), NO FFT in z, w=0 at walls.
+    Shells are cylindrical in kh = sqrt(kx^2+ky^2).
+
+    Returns shell quantities averaged over the layer, with the exact
+    decomposition  E = Eh + Ev,  Pi = Pih + Piv,  and pressure-exchange
+    terms computed in physical space (no kz-FFT artefact).
+    """
+    nz, ny, nx = U.shape
+    if dz is None and z is None:
+        raise ValueError("provide z (1D, len nz) or dz")
+
+    # ---- wavenumbers on the rFFT grid ----
+    kx_1d = 2 * np.pi * np.fft.fftfreq(nx, d=dx)      # nx//2+1  ✓
+    ky_1d = 2 * np.pi * np.fft.fftfreq(ny, d=dy)
+    ky_2d, kx_2d = np.meshgrid(ky_1d, kx_1d, indexing='ij')   # (ny, nxh)
+    # NOTE: kx_2d varies along axis 1 (see _rfft_weights), ky along axis 0.
+
+    shell_masks = shells_kh(kh_bins, kx_2d, ky_2d)
+    #weights2d   = _rfft_weights(ky_2d, kx_2d)
+    n_shells    = len(kh_bins)
+
+    # ---- vertical derivatives in physical space ----
+    zW = zw if (zw is not None) else z     # w may live on its own levels
+    dpz_w = _d_dz(W, zW, dz)              # ∂z w, uses w=0 at walls implicitly
+    dpz_p = _d_dz(P, z, dz) if P is not None else None
+
+    # ---- horizontal rFFTs (x,y only) ----
+    def hh(F):  # to spectral
+        return np.fft.fftn(F, axes=(1, 2), norm=norm)
+    def ih(Fh):  # to physical
+        return np.fft.ifftn(Fh, s=(ny, nx), axes=(1, 2), norm=norm)
+
+    u_hat, v_hat, w_hat = hh(U), hh(V), hh(W)
+    Nu_hat, Nv_hat, Nw_hat = hh(N_u), hh(N_v), hh(N_w)
+
+    # ---- energies & transfers per mode (nz, ny, nxh) ----
+    E_h_3 = 0.5 * (np.abs(u_hat)**2 + np.abs(v_hat)**2)
+    E_v_3 = 0.5 * np.abs(w_hat)**2
+    T_h_3 = -(np.real(np.conj(u_hat) * Nu_hat) +
+              np.real(np.conj(v_hat) * Nv_hat))
+    T_v_3 = -np.real(np.conj(w_hat) * Nw_hat)
+
+    # ---- shell binning (hermitian weights + layer average) ----
+    E_h_k = _bin_shells(E_h_3, shell_masks, nz)
+    E_v_k = _bin_shells(E_v_3, shell_masks, nz)
+    T_h_k = _bin_shells(T_h_3, shell_masks, nz)
+    T_v_k = _bin_shells(T_v_3, shell_masks, nz)
+
+    E_k = E_h_k + E_v_k          # exact by construction
+    T_k = T_h_k + T_v_k
+    Pi_k, Pi_h_k, Pi_v_k = ( -np.cumsum(T_k),
+                            -np.cumsum(T_h_k),
+                            -np.cumsum(T_v_k) )
+
+    # ---- pressure exchange (physical space, per shell) ----
+    phi_v_k = np.zeros(n_shells)
+    phi_h_k = np.zeros(n_shells)
+    if P is not None:
+        p_hat    = hh(P)
+        dpz_w_h = hh(dpz_w)
+        divh_h  = (1j * kx_2d[None, :, :] * u_hat +
+                   1j * ky_2d[None, :, :] * v_hat)     # ∂x u + ∂y v
+        for i, m in enumerate(shell_masks):
+            if not m.any():
+                continue
+            p_f   = ih(p_hat    * m[None, :, :])
+            dpw_f = ih(dpz_w_h * m[None, :, :])
+            divf  = ih(divh_h  * m[None, :, :])
+            # layer+horizontal mean of the physical product (no weight-2:
+            # irfftn reconstructs the full physical field, products are exact)
+            phi_v_k[i] = np.mean(p_f * dpw_f)
+            # phi_h: pressure work ON horizontal comp = -<p div_h u_h>
+            phi_h_k[i] = +np.mean(p_f * divf)
+
+    phi_res_k = phi_h_k + phi_v_k   # boundary pressure work per shell (≠0 OK)
+
+    # ---- NEW: buoyancy production of Ev, per shell ----
+    # B_v(k) = <Re( ŵ* b̂ )>_shell   [ + for Ev, m²/s³ ]
+    # Sign convention: B_v > 0  <=>  buoyancy feeds the vertical component.
+    B_v_k = np.zeros(n_shells)
+    if B is not None:
+        if B.shape != W.shape:
+            raise ValueError(
+                f"B must share W's grid: B{B.shape} vs W{W.shape}. "
+                "Interpolate b onto the w-levels (or vice-versa) first.")
+        b_hat = hh(B)                              # same rFFT in x,y
+        B_v_3 = np.real(np.conj(w_hat) * b_hat)   # per (z, ky, kx)
+        B_v_k = _bin_shells(B_v_3, shell_masks, nz)
+
+    # ---- shell geometry ----
+    kh_lo = np.concatenate(([0.0], kh_bins[:-1]))
+    dk = kh_bins - kh_lo
+    with np.errstate(invalid='ignore', divide='ignore'):
+        E_spec   = np.where(dk > 0, E_k   / dk, np.nan)
+        E_h_spec = np.where(dk > 0, E_h_k / dk, np.nan)
+        E_v_spec = np.where(dk > 0, E_v_k / dk, np.nan)
+
+    # ---- closure report (sanity checks) ----
+    closure = dict(
+        sum_Eh_plus_Ev_minus_E=float(np.nansum(E_h_k + E_v_k - E_k)),      # ~0 exact
+        sum_Pih_plus_Piv_minus_Pi=float((Pi_h_k + Pi_v_k - Pi_k)[-1]),     # ~0 exact
+        sum_phi_res=float(phi_res_k.sum()),   # ≈0 only in TOTAL (w=0 walls)
+    )
+    
+
+    return dict(
+        k=kh_bins, dk=dk,
+        k_shell_centers=0.5 * (kh_lo + kh_bins),
+        k_shell_centers_geo=np.sqrt(np.maximum(kh_lo * kh_bins, 1e-30)),
+        E_k=E_k, E_h_k=E_h_k, E_v_k=E_v_k,
+        E_k3=E_h_3+E_v_3, T_k3=T_h_3+T_v_3,
+        E_spec=E_spec, E_h_spec=E_h_spec, E_v_spec=E_v_spec,
+        T_k=T_k, T_h_k=T_h_k, T_v_k=T_v_k,
+        Pi_k=Pi_k, Pi_h_k=Pi_h_k, Pi_v_k=Pi_v_k,
+        phi_v_k=phi_v_k, phi_h_k=phi_h_k, phi_res_k=phi_res_k,
+        B_v_k=B_v_k,                    # NEW: buoyancy production of Ev
+        closure=closure,
+    )
+def compute_E_v2(k, k_mag, U, N_u,
+              V=None, W=None,
+              dealias_mask=None,
+              norm="ortho",
+              P=None, k_z=None):
+    """
+    Energy spectra E(k) with horizontal/vertical decomposition,
+    plus spectral transfers Pi_h, Pi_v and optional pressure-exchange term.
+
+    Parameters
+    ----------
+    U, N_u   : u_x and u·∇u_x (or scalar field + its NL term if V is None)
+    V, W     : tuples (field, NL_term) for v and w
+    P        : pressure field (optional). If given, computes the
+               pressure-deformation exchange phi(k) that couples E_h and E_v.
+    k_z      : 3D array of vertical wavenumbers kz (required with P).
+    """
+
+    # forward FFT of velocity (spectral space)
+    u_hat   = np.fft.fftn(U, norm=norm)
+    N_u_hat = np.fft.fftn(N_u, norm=norm)
+
+    if dealias_mask is None:
+        dealias_mask = np.ones_like(k_mag, dtype=bool)
+
+    Ntot = U.size
+
+    if V is not None:
+        v_hat,   N_v_hat = np.fft.fftn(V[0], norm=norm), np.fft.fftn(V[1], norm=norm)
+        w_hat,   N_w_hat = np.fft.fftn(W[0], norm=norm), np.fft.fftn(W[1], norm=norm)
+
+        # --- spectral KE per mode, horizontal / vertical decomposition ---
+        E_h_3 = 0.5 * (np.abs(u_hat)**2 + np.abs(v_hat)**2)
+        E_v_3 = 0.5 *  np.abs(w_hat)**2
+        E_k3  = E_h_3 + E_v_3                     # exact: E = Eh + Ev
+
+        # --- spectral transfer per mode, same decomposition ---
+        # T = -Re( û* · N̂ ), component-wise
+        T_h_3 = -(np.real(np.conj(u_hat) * N_u_hat) +
+                  np.real(np.conj(v_hat) * N_v_hat))
+        T_v_3 = -np.real(np.conj(w_hat) * N_w_hat)
+        T_k3  = T_h_3 + T_v_3                     # exact: T = Th + Tv
+
+        # --- optional pressure-deformation exchange (couples Eh <-> Ev) ---
+        # phi = Re( p̂* i kz ŵ )  : gains for E_v, losses for E_h (phi_v = -phi_h)
+        phi_v_3 = None
+                      
+        if P is not None:
+            assert k_z is not None
+            p_hat   = np.fft.fftn(P, norm=norm)
+            phi_v_3 = np.real(np.conj(p_hat) * 1j * k_z * w_hat)
+            # phi_h = -phi_v par antisymétrie exacte, pas besoin de le stocker   
+        
+            
+            
+    else:
+        # scalar variance branch (unchanged)
+        E_k3  = np.abs(u_hat)**2
+        T_k3  = -np.real(np.conj(u_hat) * N_u_hat)
+        E_h_3 = E_v_3 = T_h_3 = T_v_3 = phi_v_3 = None
+
+    # volume normalization
+    scale = 1.0 / Ntot
+    def _s(a):
+        return a * scale if a is not None else None
+    E_k3, T_k3   = _s(E_k3), _s(T_k3)
+    E_h_3, E_v_3 = _s(E_h_3), _s(E_v_3)
+    T_h_3, T_v_3 = _s(T_h_3), _s(T_v_3)
+    phi_v_3      = _s(phi_v_3)
+
+    # mask dealiased modes consistently everywhere
+    E_k3[~dealias_mask] = 0.0
+    T_k3[~dealias_mask] = 0.0
+    if E_h_3 is not None:
+        for a in (E_h_3, E_v_3, T_h_3, T_v_3):
+            a[~dealias_mask] = 0.0
+        if phi_v_3 is not None:
+            phi_v_3[~dealias_mask] = 0.0
+
+    # ---------------- shell binning (unchanged) ----------------
+    k_mag_flat = k_mag.ravel()
+    n_shells   = len(k)
+    inds  = np.searchsorted(k, k_mag_flat, side='left')
+    valid = inds < n_shells
+    iv    = inds[valid]
+
+    def binned(a):
+        if a is None:
+            return None
+        return np.bincount(iv, weights=a.ravel()[valid], minlength=n_shells)
+    
+    
+
+    mode_count = np.bincount(iv, minlength=n_shells)
+    E_k        = binned(E_k3)
+    T_k        = binned(T_k3)
+    E_h_k, E_v_k = binned(E_h_3), binned(E_v_3)
+    T_h_k, T_v_k = binned(T_h_3), binned(T_v_3)
+    phi_v_k      = binned(phi_v_3)
+    k_sum        = np.bincount(iv, weights=k_mag_flat[valid], minlength=n_shells)
+
+    # cumulative fluxes, same convention as before: Pi = -cumsum(T)
+    Pi_k   = -np.cumsum(T_k)
+    Pi_h_k = -np.cumsum(T_h_k) if T_h_k is not None else None
+    Pi_v_k = -np.cumsum(T_v_k) if T_v_k is not None else None
+
+    # ---------------- shell geometry (unchanged) ----------------
+    k_mean = np.where(mode_count > 0, k_sum / np.maximum(mode_count, 1), np.nan)
+    dk = np.diff(k, prepend=np.nan)
+    E_spec   = E_k / dk
+    E_h_spec = E_h_k / dk if E_h_k is not None else None
+    E_v_spec = E_v_k / dk if E_v_k is not None else None
+    k_lo = np.concatenate(([np.nan], k[:-1]))
+    dk  = k - k_lo
+    k_shell_centers     = 0.5 * (k_lo + k)
+    k_shell_centers_geo = np.sqrt(k_lo * k)
+
+    return dict(
+        k=k, mode_count=mode_count,
+        E_k=E_k, T_k=T_k, Pi_k=Pi_k, E_spec=E_spec,
+        # horizontal / vertical decomposition (Eh + Ev = E, Ph + Pv = P exactly)
+        E_h_k=E_h_k, E_v_k=E_v_k, E_h_spec=E_h_spec, E_v_spec=E_v_spec,
+        T_h_k=T_h_k, T_v_k=T_v_k, Pi_h_k=Pi_h_k, Pi_v_k=Pi_v_k,
+        # pressure-deformation exchange (optional): +phi for Ev, -phi for Eh
+        phi_v_k=phi_v_k,
+        E_k3=E_k3, T_k3=T_k3,
+        k_mean=k_mean, dk=dk,
+        k_shell_centers=k_shell_centers,
+        k_shell_centers_geo=k_shell_centers_geo,
+    )
+
 
 def compute_E(k,k_mag,U,N_u,
               V=None,W=None,
@@ -255,17 +614,19 @@ def compute_E(k,k_mag,U,N_u,
     # spectral KE per mode and spectral transfer per mode
     # E_mode = 0.5 * (|û|^2 + |v̂|^2 + |ŵ|^2)
     # T_mode = -Re( û* · N̂ )
-    if V is not None and W is not None:
+    v_hat, N_v_hat = 0, 0
+    if V is not None:
         v_hat   = np.fft.fftn(V[0], norm=norm)
-        w_hat   = np.fft.fftn(W[0], norm=norm)
         N_v_hat = np.fft.fftn(V[1], norm=norm)
-        N_w_hat = np.fft.fftn(W[1], norm=norm)
-        
+        w_hat, N_w_hat = 0, 0
+        if W is not None:
+            w_hat   = np.fft.fftn(W[0], norm=norm)
+            N_w_hat = np.fft.fftn(W[1], norm=norm)
         E_k3 = 0.5 * (np.abs(u_hat)**2 + np.abs(v_hat)**2 + np.abs(w_hat)**2)
         T_k3 = - (np.real(np.conj(u_hat) * N_u_hat) + 
                   np.real(np.conj(v_hat) * N_v_hat) +
                   np.real(np.conj(w_hat) * N_w_hat))
-    else:
+    else: # Here is the variance, not 0.5*variance
         E_k3 = np.abs(u_hat)**2 # *0.5
         T_k3 = -np.real(np.conj(u_hat) * N_u_hat)
 
@@ -347,7 +708,7 @@ def compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,
                          w_bc='dst',        # w=0 aux parois (Dirichlet) -> DST. 'dct' seulement si tu as une raison physique precise.
                          scalar_bc='dct'):  # flux nul par defaut (Neumann) pour un scalaire type buoyancy/theta
     """
-    Corrected and final (?) version
+    Calculate cascade from 3D field only
     
     filter_type :
       'spectral_3d' : FFT 3D complete, coquille isotrope (biaisee: periodicite en z + sous-resolution kz) - legacy/reference
@@ -681,17 +1042,22 @@ def integrate_negative_cascade(k, Pi, kH, method="trapz", refine_crossings=True)
     mask_info : dict
         Diagnostics utiles : k_used, Pi_used, integrand_used.
     """
-    k = np.asarray(k, dtype=float)
-    Pi = np.asarray(Pi, dtype=float)
+        
+    cond=~np.isnan(k)
+
+    k = np.asarray(k[cond], dtype=float)
+    Pi = np.asarray(Pi[cond], dtype=float)
 
     if k.shape != Pi.shape:
         raise ValueError("k et Pi doivent avoir la même forme")
     if np.any(k <= 0):
         raise ValueError("k doit être strictement positif (échelle log)")
 
+    # remove Nan
     # Tri croissant en k
     order = np.argsort(k)
     k, Pi = k[order], Pi[order]
+    
 
     # Restriction à k <= kH (on tronque/interpole le dernier point si besoin)
     if kH < k.max():
