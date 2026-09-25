@@ -25,7 +25,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
@@ -397,13 +397,18 @@ for idx,zi in enumerate(z_new):
 # Take relevant information from the name file
 tab = file.split('/')[-1].split('.')
 prefix,vinfo, tinfo = tab[0],tab[2],tab[4]
-file_netcdf  = '_'.join(['Cascade',prefix,vinfo,tinfo])
-file_netcdf += "_XXX"
-file_netcdf2 = pathsave+file_netcdf+'.nc'
+file_netcdf0  = '_'.join(['Cascade',prefix,vinfo,tinfo])
+file_netcdf0 += "_XXX"
+file_netcdf0  = pathsave+file_netcdf0+'.nc'
 
 for var in var_to_plot:
-    file_netcdf3= file_netcdf2.replace('XXX',var)
-    
+    file_netcdf1 = file_netcdf0.replace('XXX',var)
+    if Filter3D:
+        file_netcdf2 = file_netcdf1.replace('Cascade','Cascade_BT')
+    if coarsegraining:
+        file_netcdf3 = file_netcdf1.replace('Cascade','Cascade_CG')
+
+
     # Simplification to write netcdf file
     if var=='TKE':
         r = result.copy()
@@ -433,6 +438,11 @@ for var in var_to_plot:
     ds["PBL"]   = PBLheight  # A single value
     ds["Pineg"] = cascadeneg
     
+    if Filter3D:
+        ds2 = ds.copy()
+    if coarsegraining:
+        ds3 = ds.copy()
+    
     if r['PI_k'] is not None:
         ds["PI_k"]  = (("k",), r['PI_k'])
         ds["PI_hh"] = (("k",), r['PI_hh'])
@@ -459,39 +469,46 @@ for var in var_to_plot:
         ds["Epara"]   = (("kpara",), r['Epara'])
         ds["Tpara"]   = (("kpara",), r['Tpara'])
         ds["Pipara"]  = (("kpara",), r['Pipara'])
-        
-    if Filter3D:
-        ds["EkBT"] = (("k", "zlist"), Ek_BT)
-        ds["TkBT"] = (("k", "zlist"), Tk_BT)
-        ds["PiBT"] = (("k", "zlist"), Pi_BT)
-        ds["PIhhBT"] = (("k", "zlist"), PIhh_BT)
-        ds["PIhvBT"] = (("k", "zlist"), PIhv_BT)
-        ds["PIvhBT"] = (("k", "zlist"), PIvh_BT)
-        ds["PIvvBT"] = (("k", "zlist"), PIvv_BT)
-        ds["EkTB"] = (("k", "zlist"), Ek_TB)
-        ds["TkTB"] = (("k", "zlist"), Tk_TB)
-        ds["PiTB"] = (("k", "zlist"), Pi_TB)
-        ds["PIhhTB"] = (("k", "zlist"), PIhh_TB)
-        ds["PIhvTB"] = (("k", "zlist"), PIhv_TB)
-        ds["PIvhTB"] = (("k", "zlist"), PIvh_TB)
-        ds["PIvvTB"] = (("k", "zlist"), PIvv_TB)
-        ds["PinegBT"] = (("zlist",),PinegBT)
-        ds["PinegTB"] = (("zlist",),PinegTB)
-    
-    if coarsegraining:
-        ds["PicoarSFS"] = (("k","z"),Pi_z_k['sfs'])
-        ds["PicoarNAI"] = (("k","z"),Pi_z_k['naive'])
-        ds = ds.assign_coords(Lz=ell_z_list)
-        ds = ds.assign_coords(Lh=ell_h_list)
-        ds["Pi_map"]    = (("Lh","Lz","z"),Pi_map)
-    
     ds['E2D']  = (("z","k2D"),E2D[scalar]) 
     ds['Pi2D'] = (("z","k2D"),Pi2D[scalar])
+
+        
+    if Filter3D:
+        ds2 = ds.copy()
+        ds2["EkBT"] = (("k", "zlist"), Ek_BT)
+        ds2["TkBT"] = (("k", "zlist"), Tk_BT)
+        ds2["PiBT"] = (("k", "zlist"), Pi_BT)
+        ds2["PIhhBT"] = (("k", "zlist"), PIhh_BT)
+        ds2["PIhvBT"] = (("k", "zlist"), PIhv_BT)
+        ds2["PIvhBT"] = (("k", "zlist"), PIvh_BT)
+        ds2["PIvvBT"] = (("k", "zlist"), PIvv_BT)
+        ds2["EkTB"] = (("k", "zlist"), Ek_TB)
+        ds2["TkTB"] = (("k", "zlist"), Tk_TB)
+        ds2["PiTB"] = (("k", "zlist"), Pi_TB)
+        ds2["PIhhTB"] = (("k", "zlist"), PIhh_TB)
+        ds2["PIhvTB"] = (("k", "zlist"), PIhv_TB)
+        ds2["PIvhTB"] = (("k", "zlist"), PIvh_TB)
+        ds2["PIvvTB"] = (("k", "zlist"), PIvv_TB)
+        ds2["PinegBT"] = (("zlist",),PinegBT)
+        ds2["PinegTB"] = (("zlist",),PinegTB)
+        ds2.to_netcdf(file_netcdf2)
+        del ds2
+    
+    if coarsegraining:
+        ds3["PicoarSFS"] = (("k","z"),Pi_z_k['sfs'])
+        ds3["PicoarNAI"] = (("k","z"),Pi_z_k['naive'])
+        ds3 = ds3.assign_coords(Lz=ell_z_list)
+        ds3 = ds3.assign_coords(Lh=ell_h_list)
+        ds3["Pi_map"]    = (("Lh","Lz","z"),Pi_map)
+        ds3.to_netcdf(file_netcdf3)
+        del ds3
+    
     
     # Save to NetCDF (overwrites if exists)
-    ds.to_netcdf(file_netcdf3)
+    ds.to_netcdf(file_netcdf1)
     
-    del r,file_netcdf3
+
+    del r,file_netcdf1
 
 
 
