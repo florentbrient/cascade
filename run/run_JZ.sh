@@ -3,7 +3,7 @@
 #SBATCH -N 1          # nodes number
 #SBATCH -n 40          # CPUs number (on all nodes) 
 ##SBATCH -q qos_cpu-t3
-##SBATCH --partition=cpu_p1
+##SBATCH --partition=cpu_dev
 #SBATCH --partition=prepost
 #SBATCH -o CASC.eo%j   #
 #SBATCH -e CASC.eo%j   #
@@ -25,7 +25,7 @@ file=$1
 echo $file
 
 path="/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/"
-filepy="compute_spectrum_analysis.py"
+filepy="compute_spectrum_cascade.py"
 export MONORUN="python"
 
 module load miniforge/24.9.0

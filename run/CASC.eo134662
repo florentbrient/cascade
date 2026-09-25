@@ -1,0 +1,11 @@
+------------------------------------------------------------------
+Job submit on jean-zay3 by rces071
+JobID=134662 Running_Node=r2i4n23
+Node=1 Task=40
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.001.nc
+python: can't open file '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src//compute_spectrum_analysis.py': [Errno 2] No such file or directory
+
+real	0m0.029s
+user	0m0.008s
+sys	0m0.015s

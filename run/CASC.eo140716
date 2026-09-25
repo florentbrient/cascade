@@ -1,0 +1,11 @@
+------------------------------------------------------------------
+Job submit on jean-zay2 by rces071
+JobID=140716 Running_Node=r1i5n17
+Node=1 Task=40
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.001.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+[2026-09-24T13:36:18.008] error: *** JOB 140716 ON r1i5n17 CANCELLED AT 2026-09-24T13:36:18 DUE TO TIME LIMIT ***

@@ -25,7 +25,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= True
+testlocal= False
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
@@ -248,12 +248,12 @@ if Filter3D:
         
         
         # Save important variables
-        Ek_BT[:,ij],Tk_BT[:,ij],Pi_BT[:,ij] = [resultplus1[stcut][ijk] for ijk in ['E','T','Pi']]
+        Ek_BT[:,ij],Tk_BT[:,ij],Pi_BT[:,ij] = [resultplus1[stcut]['Eout'][ijk] for ijk in ['E_k','T_k','Pi_k']]
         PIhh_BT[:,ij],PIhv_BT[:,ij],PIvh_BT[:,ij],PIvv_BT[:,ij] = \
             [resultplus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
             
         
-        Ek_TB[:,ij],Tk_TB[:,ij],Pi_TB[:,ij] = [resultminus1[stcut][ijk] for ijk in ['E','T','Pi']]
+        Ek_TB[:,ij],Tk_TB[:,ij],Pi_TB[:,ij] = [resultminus1[stcut]['Eout'][ijk] for ijk in ['E_k','T_k','Pi_k']]
         PIhh_TB[:,ij],PIhv_TB[:,ij],PIvh_TB[:,ij],PIvv_TB[:,ij] = \
             [resultminus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
 
@@ -263,9 +263,9 @@ if Filter3D:
     # Integrate cascade
     PinegBT,PinegTB = np.zeros(len(resultplus1)),np.zeros(len(resultplus1))
     for ij,key in enumerate(resultplus1):
-        Pi = resultplus1[key]['Pi']
+        Pi = resultplus1[key]['Eout']['Pi_k']
         PinegBT[ij], _ = stl.integrate_negative_cascade(kc, Pi, kPBL, method="trapz")
-        Pi = resultminus1[key]['Pi']
+        Pi = resultminus1[key]['Eout']['Pi_k']
         PinegTB[ij], _ = stl.integrate_negative_cascade(kc, Pi, kPBL, method="trapz")
     
 #    plt.plot(zfilter/PBLheight,I/cascadeneg,'r')
