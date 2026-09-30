@@ -9,15 +9,9 @@ Created on Mon Sep 28 15:54:52 2026
 import numpy as np
 import tools as tl
 import pylab as plt
-import math
 import glob
-import netCDF4 as nc
 from netCDF4 import num2date
 import datetime
-
-
-def nc_dataset_list(file):
-    return nc.Dataset(file, 'r')
 
 
 # Open all netcdf files
@@ -31,7 +25,7 @@ pathout+= prefix+'/'
 tl.mkdir(pathout)
 
 # Variables
-varall  = ['TKE','THLM_new','RNPM_new','RCT_new','PABST_new','buoyancy_new']
+varall  = ['TKE','THLM','RNPM','RCT','PABST','buoyancy']
 data    = {}
 for var in varall:
     filein    = filein0.replace('XXX',var)
@@ -43,6 +37,8 @@ kperp = data['TKE'].kperp.values
 kpara = data['TKE'].kpara.values
 z     = data['TKE'].z.values
 k2D   = data['TKE'].k2D.values
+kLWP  = data['TKE'].kLWP.values
+
 
 # Compute altitude differences
 dz = np.diff(z)  # Differences between consecutive altitudes
@@ -62,7 +58,7 @@ datarad = []
 for idx,file in enumerate(files):
     # Open data from files
     print('file : ',file)
-    data1D = nc_dataset_list(file)
+    data1D = tl.nc_dataset_list(file)
     
     timing = data1D['time_les'][:]  # start : 25300
     units = data1D['time_les'].units
@@ -117,15 +113,25 @@ plotlines=2
 sigma = 1
 
 # Initialize tables
-nt,nkv    =np.shape(data['TKE'].E[indices])
-_,nz,nkv2 =np.shape(data['TKE'].E2D[indices])
-kvmax3D, kvmax2D, Es3D, Es2D = {},{},{},{}
-for var in varall:
-    kvmax3D[var]=np.zeros(nt)
-    Es3D[var]   =np.zeros((nt,nkv))
-    kvmax2D[var]=np.zeros(nt)
-    Es2D[var]   =np.zeros((nt,nkv2))
+nt,nk    =np.shape(data['TKE'].E[indices])
+_,nz,nk2 =np.shape(data['TKE'].E2D[indices])
 
+kmaxLWP = np.zeros(nt)
+EsLWP   = np.zeros((nt,nk))
+
+kmax3D, kmax2D, Es3D, Es2D = {},{},{},{}
+kmax2Dz ={}
+for var in varall:
+    kmax3D[var]=np.zeros(nt)
+    Es3D[var]   =np.zeros((nt,nk))
+    kmax2D[var]=np.zeros(nt)
+    Es2D[var]   =np.zeros((nt,nk2))
+    kmax2Dz[var]=np.zeros((nt,nz))
+
+
+# For 2D plot
+zplot    = [0,0.1,0.25,0.5,0.75,0.90,1] 
+zplotstr = [str(idx) for idx in zplot]
 
 
 print(indices)
@@ -139,18 +145,35 @@ for idxt,tc in enumerate(indices):
     kPBL = np.tile(kPBL, (1, 1))
     idxpbl  = tl.near(z,PBL)
 
+    # Find LWP cell
+    ELWP = data['TKE']['ELWP'][idxt]
+    cond = ~np.isnan(ELWP)
+    ELWP = ELWP[cond]
+    kLWPh= kLWP[cond] # to modify
+    kmaxLWP[idxt],EsLWP[idxt,:],_ = tl.findkvmax(kLWPh,ELWP,sigma=sigma)
     
     for var in varall:
         
-        # New calcul, more simple
+        # Find cell size
         Etmp = data[var]['E_spec'][idxt]
         print(kv.shape,Etmp.shape)
-        kvmax3D[var][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+        kmax3D[var][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
         Etmp = data[var]['E2D'][idxt]
-        Etmp = Etmp/np.insert(np.diff(k2D), 0, np.nan)
-        kvmax2D[var][idxt],Es2D[var][idxt,1:],_  = tl.findkvmax(k2D,Etmp.T,sigma=sigma,weights=dz)
+        kmax2D[var][idxt],Es2D[var][idxt,1:],_ = tl.findkvmax(k2D,Etmp.T,sigma=sigma,weights=dz)
+        for idxz,zz in enumerate(z):
+            kmax2Dz[var][idxt,idxz],_,_        = tl.findkvmax(k2D,Etmp[idxz,:],sigma=sigma)
 
 
+        # Plot Pi for different altitude
+        namefig=pathout+'PI_z_'+var+'_'+prefix+'_'+tst
+        Erzall = [data[var]['Pi2D'][tc,tl.near(z,idx*PBL),:] for idx in zplot]
+        tl.plot_flux(k2D,Erzall,
+                  kPBL=kPBL,#kin=kin[idxt],
+                  kcell=kmaxLWP[idxt],
+                  logy=False,\
+                  y1lab=y2lab,labels=zplotstr,
+                  plotlines=plotlines,namefig=namefig)    
+            
         
         # Compute E, PI for all, perp and para
         chtmp = ['','perp','para']
@@ -171,7 +194,7 @@ for idxt,tc in enumerate(indices):
             
             tl.plot_flux(khere,Ehere,PI=Pihere,
                   kPBL=kPBL,#kin=kin[idxt],
-    #              kcell=kvmaxLWP[idxt],
+                  kcell=kmaxLWP[idxt],
                   y1lab='E'+ch,y2lab='PiE',
                   plotlines=plotlines,namefig=namefig)
             k3D  += [khere]
@@ -182,8 +205,32 @@ for idxt,tc in enumerate(indices):
         namefig=pathout+'E3D_'+var+'_'+prefix+'_'+tst
         tl.plot_flux(np.array(k3D),np.array(E3D),PI=np.array(Pi3D),
               kPBL=kPBL,#kin=kin[idxt],
-    #          kcell=kvmaxLWP[idxt],
+              kcell=kmaxLWP[idxt],
               y1lab=y1lab, 
               y2lab=y2lab,
               labels=chtmp,normalized=True,
               plotlines=2,namefig=namefig)
+        
+        # Plot separation Pi_hh, Pi_hv...
+        chtmp      = ['Pi','Pi_hh','Pi_hv','Pi_vh','Pi_vv']
+        chtmplab   = ['Total','hh','hv','vh','vv']
+        colors     = ['b','c','m','m','c']
+        linestyles = ['-','--','--',':',':']
+        
+        Pi3D = []
+        for ij,ch in enumerate(chtmp):
+            Pitmp  = data[var][ch][idxt]
+            idxtmp = ~np.isnan(Pitmp)
+            Pi3D  += [Pitmp[idxtmp]]
+        #kbins = np.array(data['kbins'])
+            
+        namefig=pathout+'E3Dhv_'+var+'_'+prefix+'_'+tst
+        tl.plot_flux(kv,Pi3D,
+              kPBL=kPBL,
+              kcell=kmaxLWP[idxt],
+              logy=False,
+              y1lab=y2lab,
+              labels=chtmplab,normalized=True,
+              colors=colors,linestyles=linestyles,
+              plotlines=plotlines,namefig=namefig)
+        

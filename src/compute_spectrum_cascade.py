@@ -27,7 +27,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 # Test on local file (by default: False)
 testlocal= True
 # Run Filtered cascade (by default: True)
-Filter3D = True
+Filter3D = False
 coarsegraining = False
 
 
@@ -65,12 +65,28 @@ THLM,RNPM,RVT,RCT = [tl.createnew(var,DATA,var1D) for var in variables]
 z,y,x  = [DATA[ij][:] for ij in var1D]
 nxnynz,dz,dy,dx= tl.dimensions(DATA,var1D)
 
+# By default, save information about the LWP 
+if RCT is not None:
+    nvar = 'LWP'
+    nvar0= 'RCT'
+elif RVT is not None:
+    nvar = 'PRW'
+    nvar0= 'RVT'
+else:
+    nvar = None
+    sys.exit()
+    
+if nvar is not None:
+    LWP = tl.createnew(nvar,DATA,var1D)
+    LWP = np.squeeze(LWP)
+
 # Delete DATA to save memory
 del DATA
 
 # Clean data (remove boundaries)
 UT,VT,WT,PABST    = [tl.removebounds(tmp) for tmp in [UT,VT,WT,PABST]]
 THLM,RNPM,RVT,RCT = [tl.removebounds(tmp) for tmp in [THLM,RNPM,RVT,RCT]]
+LWP               = tl.removebounds(LWP)
 x,y,z,dz          = [tl.removebounds(tmp) for tmp in [x,y,z,dz]]
 
 # Find Boundary-layer height (zi)
@@ -144,6 +160,17 @@ result = stl.compute_spectral_transfer(
     dx=dx, dy=dy, dz=dz_new,z=z_new,
     binning='log',nbins=nbins, nmin=nmin)
 
+# Calculate LWP spectra
+winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
+resultLWP = stl.compute_spectral_transfer(
+    winds2D, scalar=LWP,
+    dx=dx, dy=dy,
+    binning='log',nbins=nbins, nmin=0)
+# Check total variance 
+kLWP = resultLWP['Eout']['k']
+ELWP = resultLWP['Eout']['E_spec']
+tl.checkvariance(kLWP,ELWP,LWP)
+
 # Compute spectra and cascade for all variables in table2:
 result_b ={}
 for scalar in table2.keys():
@@ -156,13 +183,7 @@ for scalar in table2.keys():
             binning='log',nbins=nbins, nmin=nmin)
         result_b[scalar] = tmp
         del tmp
-    # What do you want to save:
         
-        
-
-# For information, Egality is:
-# Pi = PI_3d*(nx*ny*nznew)
-
 # Check equality between the spectra energy and the field
 k,kc = result['Eout']['k'],result['Eout']['k_shell_centers']
 dk   = result['Eout']['dk']
@@ -176,25 +197,8 @@ tl.checkvariance(kc,E_k3_mean,TKE3D,type='mean')
 
 cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Eout']['Pi_k'], kPBL, method="trapz")
 
-
-# Eperp_k3_mean = result['Eperp']/np.diff(k)/(nx*ny*nz)
-# tl.checkvariance(kc,Eperp_k3_mean,TKE3D,type='mean')
-
-# c_k3_mean = result_c['Epara']/np.diff(result_c['kpara']).mean()/(nx*ny*nz)
-# tl.checkvariance(result_c['kpara'],c_k3_mean,THLM_new,type='var')
-
-# b_k3_mean = result_b['E']/np.diff(k)/(nx*ny*nz)
-# tl.checkvariance(kc,b_k3_mean,buoyancy_new,type='var')
-
-# c_k3_mean = result_c['E']/np.diff(k)/(nx*ny*nz)
-# tl.checkvariance(kc,c_k3_mean,THLM_new,type='var')
-
-# c_k3_mean = result_c['Eperp']/np.diff(k)/(nx*ny*nz)
-# tl.checkvariance(kc,c_k3_mean,THLM_new,type='var')
-
-# c_k3_mean = result_c['Epara']/np.diff(result_c['kpara']).mean()/(nx*ny*nz)
-# tl.checkvariance(result_c['kpara'],c_k3_mean,THLM_new,type='var')
-
+    
+    
 # For 3D filtering
 idxzlist = None
 if Filter3D:
@@ -402,7 +406,8 @@ file_netcdf0 += "_XXX"
 file_netcdf0  = pathsave+file_netcdf0+'.nc'
 
 for var in var_to_plot:
-    file_netcdf1 = file_netcdf0.replace('XXX',var)
+    varfile = var.split('_')[0] 
+    file_netcdf1 = file_netcdf0.replace('XXX',varfile)
     if Filter3D:
         file_netcdf2 = file_netcdf1.replace('Cascade','Cascade_BT')
     if coarsegraining:
@@ -431,7 +436,7 @@ for var in var_to_plot:
                 "kpara":r['kpara'],
                 "nx":nx,"ny":ny,"nz":nz,
                 "zlist":idxzlist,
-                "k2D":k2D
+                "k2D":k2D,"kLWP":kLWP
                 }
     )
     
@@ -469,8 +474,9 @@ for var in var_to_plot:
         ds["Epara"]   = (("kpara",), r['Epara'])
         ds["Tpara"]   = (("kpara",), r['Tpara'])
         ds["Pipara"]  = (("kpara",), r['Pipara'])
-    ds['E2D']  = (("z","k2D"),E2D[scalar]) 
-    ds['Pi2D'] = (("z","k2D"),Pi2D[scalar])
+    ds['E2D']  = (("z","k2D"),E2D[var]) 
+    ds['Pi2D'] = (("z","k2D"),Pi2D[var])
+    ds['ELWP'] = (("kLWP"),ELWP)
 
         
     if Filter3D:

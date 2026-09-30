@@ -18,6 +18,9 @@ from scipy.ndimage.filters import gaussian_filter1d
 import xarray as xr
 from glob import glob
 import pylab as plt
+import os
+import netCDF4 as nc
+
 
 from PIL import Image
 from matplotlib.ticker import ScalarFormatter
@@ -36,6 +39,10 @@ def read_info(fileinfo):
         info_dict[key]=tmp[1]
     #print(info_dict)
     return info_dict
+
+
+def nc_dataset_list(file):
+    return nc.Dataset(file, 'r')
 
 # Find path
 def findpath(fileinfo):
@@ -134,6 +141,14 @@ def anomcalc(tmp):
     data = tmp-mean
     return data
 
+#Repeat axis in one additional dimension
+def repeat(zz,ss):
+    #if len(ss)==1:
+    zz  = np.repeat(zz[ :,np.newaxis],ss[0],axis=1)        
+    if len(ss)==2:
+        zz  = np.repeat(zz[ :,:, np.newaxis],ss[1],axis=2)
+    return zz
+
 # Find Boundary-layer top (zi)
 def findpbltop(tmp,zz,offset=0.25):
     #tmp     = createnew(typ,DATA,var1D)
@@ -192,6 +207,12 @@ def tht2temp(THT,P):
     exner= np.power(P/p0,CC.RD/CC.RCP)
     temp = THT*exner
     return temp
+
+def createrho(T,P):
+    ss   = T.shape
+    RR   = np.ones(ss)*CC.RD
+    rho  = P/(RR*T)
+    return rho
 
 # Create new variables in Meso-NH
 def createnew(vv,DATA,var1D,idxzi=None):
@@ -533,13 +554,11 @@ def findkvmax(kv,tmp,weights=None,sigma=1):
     if weights is not None:
         tmp = nanweighted_average(tmp,weights=weights) 
 
-    tmp     = tmp[~np.isnan(tmp)]    
+    tmp     = tmp[~np.isnan(tmp)]
+    
     Er      = np.tile(tmp, (1, 1))
     Ers     = smooth(tmp,sigma=sigma)
     
-    plt.loglog(Er);plt.loglog(Ers,'r');plt.show()
-    print(np.isnan(Ers.max()))
-
     kvmax   = None
     if not np.isnan(Ers.max()):
         kvmax   = kv[Ers.argmax()]
