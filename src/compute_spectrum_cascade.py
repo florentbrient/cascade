@@ -25,7 +25,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= True
+testlocal= False
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
