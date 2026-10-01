@@ -25,7 +25,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
@@ -64,6 +64,8 @@ THLM,RNPM,RVT,RCT = [tl.createnew(var,DATA,var1D) for var in variables]
 #nxnynz,data1D,dx,dy,dz= tl.dimensions(DATA,var1D)
 z,y,x  = [DATA[ij][:] for ij in var1D]
 nxnynz,dz,dy,dx= tl.dimensions(DATA,var1D)
+timesimu = DATA['time'][:]
+print(timesimu)
 
 # By default, save information about the LWP 
 if RCT is not None:
@@ -151,7 +153,8 @@ nbins = 100
 ################################################
 
 # nmin
-nmin = 20
+#nmin = 20
+nmin = None
 
 # Compute spectra and cascade from 3D fields
 winds =  (UT_new, VT_new, WT_new)
@@ -165,7 +168,7 @@ winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
 resultLWP = stl.compute_spectral_transfer(
     winds2D, scalar=LWP,
     dx=dx, dy=dy,
-    binning='log',nbins=nbins, nmin=0)
+    binning='log',nbins=nbins, nmin=None)
 # Check total variance 
 kLWP = resultLWP['Eout']['k']
 ELWP = resultLWP['Eout']['E_spec']
@@ -442,6 +445,7 @@ for var in var_to_plot:
     
     ds["PBL"]   = PBLheight  # A single value
     ds["Pineg"] = cascadeneg
+    ds["time"]  = timesimu
     
     if Filter3D:
         ds2 = ds.copy()
