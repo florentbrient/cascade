@@ -1,1 +1,1 @@
-../infos/info_run_JZ_FIRZ4.txt
+../infos/info_run_JZ_FIZ4c.txt

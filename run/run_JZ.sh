@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -J CASC
 #SBATCH -N 1          # nodes number
-#SBATCH -n 40          # CPUs number (on all nodes) 
-##SBATCH -q qos_cpu-t3
+#SBATCH -n 10         # CPUs number (on all nodes) 
+#SBATCH -q qos_cpu-t3
 ##SBATCH --partition=cpu_dev
-#SBATCH --partition=prepost
+##SBATCH --partition=prepost
 #SBATCH -o CASC.eo%j   #
 #SBATCH -e CASC.eo%j   #
 #SBATCH -t 01:59:00    # time limit
