@@ -210,10 +210,10 @@ if Filter3D:
     zfilter    = z_new[idxzfilter]
 
     Nk,Nzz = len(k),len(idxzlist)
-    Ek_BT,Tk_BT,Pi_BT = [np.zeros((Nk,Nzz)) for ij in range(3)]
-    Ek_TB,Tk_TB,Pi_TB = [np.zeros((Nk,Nzz)) for ij in range(3)]
-    PIhh_BT,PIhv_BT,PIvh_BT,PIvv_BT = [np.zeros((Nk,Nzz)) for ij in range(4)]
-    PIhh_TB,PIhv_TB,PIvh_TB,PIvv_TB = [np.zeros((Nk,Nzz)) for ij in range(4)]
+    Ek_BT,Tk_BT,Pi_BT = [np.zeros((Nk,Nzz))*np.nan for ij in range(3)]
+    Ek_TB,Tk_TB,Pi_TB = [np.zeros((Nk,Nzz))*np.nan for ij in range(3)]
+    PIhh_BT,PIhv_BT,PIvh_BT,PIvv_BT = [np.zeros((Nk,Nzz))*np.nan for ij in range(4)]
+    PIhh_TB,PIhv_TB,PIvh_TB,PIvv_TB = [np.zeros((Nk,Nzz))*np.nan for ij in range(4)]
 
     
     resultplus1,resultminus1,resultplus2 ={},{},{}
@@ -268,7 +268,7 @@ if Filter3D:
         
     
     # Integrate cascade
-    PinegBT,PinegTB = np.zeros(len(resultplus1)),np.zeros(len(resultplus1))
+    PinegBT,PinegTB = np.zeros(len(resultplus1))*np.nan,np.zeros(len(resultplus1))*np.nan
     for ij,key in enumerate(resultplus1):
         Pi = resultplus1[key]['Eout']['Pi_k']
         PinegBT[ij], _ = stl.integrate_negative_cascade(kc, Pi, kPBL, method="trapz")
@@ -364,8 +364,8 @@ if coarsegraining:
 var_to_plot = ['TKE']+list(result_b.keys())[:]
 E2D,Pi2D = {},{}
 for var in var_to_plot:
-    E2D[var]  = np.zeros((nz,nbins+1))
-    Pi2D[var] = np.zeros((nz,nbins+1))
+    E2D[var]  = np.zeros((nz,nbins+1))*np.nan
+    Pi2D[var] = np.zeros((nz,nbins+1))*np.nan
 for idx,zi in enumerate(z_new):
     
     # TKE full
