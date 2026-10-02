@@ -20,6 +20,7 @@ from glob import glob
 import pylab as plt
 import os
 import netCDF4 as nc
+from itertools import groupby
 
 
 from PIL import Image
@@ -840,3 +841,77 @@ def plot_flux(k,E,PI=None,
     
     return None
 
+
+
+def plot_time(time,Gamma,
+              lambdaIn=None,
+              day=None,
+              namex='Aspect Ratio (-)',
+              namefig='test',title=None, namecaption=None,
+              ylim=None,colors=['orange','b','r','g','m'],
+              marker=None,line='-',
+              xsize=(14,10),fts=18,lw=2.5):
+    
+    # Start plot
+    fig, ax = plt.subplots(1,1,figsize=xsize)
+    
+    # Modify time (by deltaT/2)
+    time = time+(time[1]-time[0])/2.
+    
+    timeticks = np.arange(0, time.max(), 4)
+
+    
+    keys = list(Gamma.keys())
+    print(keys)
+    if namecaption is None:
+        namecaption = keys
+
+    # Plot all Gamma
+    for ij,key in enumerate(keys):
+        ax.plot(time,Gamma[key],
+                lw=lw,ls=line,
+                label=namecaption[ij],
+                color=colors[ij], marker=marker)
+    if lambdaIn is not None:
+        color='k'
+        ax.plot(time,lambdaIn,color=color,ls='--',lw=lw,label=r'$\epsilon_{in}$')
+    
+    if day is not None:
+        for is_d, group in groupby(enumerate(day), key=lambda x: x[1]):
+            indices = [i for i, _ in group]
+            if is_d:
+#                ax.axvspan(time[indices[0]], time[indices[-1]+1], 
+                ax.axvspan(time[indices[0]], time[indices[-1]], 
+                           alpha=0.3, color='moccasin', linewidth=0)
+    
+    # Wood and Hartmann 2006
+    #k1,k2 =30.,40.
+    #ax.axhspan(k1, k2, color="grey", alpha=0.3)  # Adjust alpha for transparency
+    
+    # Legends
+    ax.legend(title=None,shadow=True,numpoints=1,loc=2,
+               bbox_to_anchor=(0.0,0.9),
+               fontsize=12,title_fontsize=20)
+    
+    if title is not None:
+        plt.title(title)
+
+    if ylim is not None:
+        ax.set_ylim(ylim[0], ylim[1])
+
+    ax.set_xlabel('Time (hours)',fontsize=fts)    
+    ax.set_ylabel(namex,fontsize=fts)
+    
+    ax.set_xlim(0, time.max())
+    ax.set_xticks(timeticks,size=fts)   
+
+
+    ax.tick_params(axis='both', labelsize=fts)
+    adjust_spines(ax,['left', 'bottom'])
+        
+    # Save figure
+    namefig+='.png'
+    savefig(fig, namefig)
+    plt.close('all')
+    
+    return None

@@ -12,6 +12,7 @@ import pylab as plt
 import glob
 from netCDF4 import num2date
 import datetime
+import math
 
 
 # Open all netcdf files
@@ -93,6 +94,8 @@ time_hours3D = np.array(time_hours3D)
 time_hours3D = time_hours3D+1 # because 001 is the saving 1 hour after the start
 nt         = len(time_hours3D)
 
+# day hours
+day_hours = day[[tl.near(time_hours3D[ij],time_hours) for ij in range(nt)]]
 
 # Caption axis
 y1lab,y2lab= r'E $(m^3/s^2)$',r'$\Pi (m^2/s^3)$'
@@ -107,6 +110,7 @@ zplotstr = [str(idx) for idx in zplot]
 
 # Initialize variables for global plot
 kmaxLWP = np.zeros(nt)
+kPBLall = np.zeros(nt)
 
 # Plotall
 plotall = False
@@ -159,17 +163,20 @@ for idxt,tc in enumerate(time_hours3D):
         kmax3D, kmax2D, Es3D, Es2D = {},{},{},{}
         kmax2Dz ={}
         for var in varall:
-            kmax3D[var]=np.zeros(nt)
-            Es3D[var]   =np.zeros((nt,nk))
-            kmax2D[var]=np.zeros(nt)
-            Es2D[var]   =np.zeros((nt,nk2))
-            kmax2Dz[var]=np.zeros((nt,nz))
+            kmax3D[var]=np.zeros(nt)*np.nan
+            Es3D[var]   =np.zeros((nt,nk))*np.nan
+            kmax2D[var]=np.zeros(nt)*np.nan
+            Es2D[var]   =np.zeros((nt,nk2))*np.nan
+            kmax2Dz[var]=np.zeros((nt,nz))*np.nan
+        kmax3D['TKEh']=np.zeros(nt)*np.nan
+        kmax3D['TKEv']=np.zeros(nt)*np.nan
 
 
 #for idxt,tc in enumerate(indices):
     
     PBL     = data['TKE'][idxt].PBL.values
     kPBL    = tl.z2k(PBL) # rad/m
+    kPBLall[idxt] = kPBL
     kPBL    = np.tile(kPBL, (1, 1))
     idxpbl  = tl.near(z,PBL)
 
@@ -192,6 +199,11 @@ for idxt,tc in enumerate(time_hours3D):
 
         # Calculate cell size for TKEv and TKEh
         if var=="TKE":
+            Etmp = data[var][idxt]['E_h_spec']
+            kmax3D['TKEh'][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+            Etmp = data[var][idxt]['E_v_spec']
+            kmax3D['TKEv'][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+
 
         if plotall:            
             # Plot Pi for different altitude
@@ -269,22 +281,19 @@ for idxt,tc in enumerate(time_hours3D):
 # Plot temporal evolution of aspect ratio
 namefig=pathout+'aspect_ratio_'+prefix
 Gamma = {}
-Gamma[nvar]  =kPBLall/kvmaxLWP #(2pi/kvmax)/(2pi/kPBL) 
-Gamma['TKE'] =kPBLall/kvmax 
-Gamma['TKEh']  =kPBLall/kvmaxRCT[varRCT.index('E1dr_TKEh'),:]
-Gamma['TKEv']  =kPBLall/kvmaxRCT[varRCT.index('E1dr_TKEv'),:]
-#Gamma['WT']  =kPBLall/kvmaxRCT[varRCT.index('E1dr_WT'),:]
-Gamma['THL'] =kPBLall/kvmaxRCT[varRCT.index('E1dr_THL'),:] 
-#Gamma['RCT'] =kPBLall/kvmaxRCT[varRCT.index('E1dr_RCT'),:] 
+if var in kmax3D.keys():
+    print(var)
+    Gamma[var]  =kPBLall/kmax3D[var] #(2pi/kvmax)/(2pi/kPBL) 
+Gamma['LWP'] = kPBLall/kmaxLWP
+    
 maxh = np.max([Gamma[ij] for ij in Gamma.keys()])
 ylim = [0,math.ceil(maxh / 5) * 5]
 
-LambdaEpsIn = kPBLall/kin
-lambdaIn = {}
-lambdaIn['LambdaEpsIn']=LambdaEpsIn
-tl.plot_time(timecut,Gamma,
-#             lambdaIn=LambdaEpsIn,
+#LambdaEpsIn = kPBLall/kin
+#lambdaIn = {}
+#lambdaIn['LambdaEpsIn']=LambdaEpsIn
+tl.plot_time(time_hours3D,Gamma,
              ylim=ylim,marker='o',
-             day=day_hours[indices],
+             day=day_hours,
              namex='Aspect Ratio (-)',
              namefig=namefig)
