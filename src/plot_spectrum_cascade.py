@@ -163,14 +163,15 @@ for idxt,tc in enumerate(time_hours3D):
         kmax3D, kmax2D, Es3D, Es2D = {},{},{},{}
         kmax2Dz ={}
         for var in varall:
-            kmax3D[var]=np.zeros(nt)*np.nan
+            kmax3D[var] =np.zeros(nt)*np.nan
             Es3D[var]   =np.zeros((nt,nk))*np.nan
-            kmax2D[var]=np.zeros(nt)*np.nan
+            kmax2D[var] =np.zeros(nt)*np.nan
             Es2D[var]   =np.zeros((nt,nk2))*np.nan
-            kmax2Dz[var]=np.zeros((nt,nz))*np.nan
-        kmax3D['TKEh']=np.zeros(nt)*np.nan
-        kmax3D['TKEv']=np.zeros(nt)*np.nan
-
+            # nz+5 for safety
+            kmax2Dz[var]=np.zeros((nt,nz+5))*np.nan
+        for var in ['TKEh','TKEv']:
+            kmax3D[var]=np.zeros(nt)*np.nan
+            Es3D[var]  =np.zeros((nt,nk))*np.nan
 
 #for idxt,tc in enumerate(indices):
     
@@ -200,9 +201,9 @@ for idxt,tc in enumerate(time_hours3D):
         # Calculate cell size for TKEv and TKEh
         if var=="TKE":
             Etmp = data[var][idxt]['E_h_spec']
-            kmax3D['TKEh'][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+            kmax3D['TKEh'][idxt],Es3D['TKEh'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
             Etmp = data[var][idxt]['E_v_spec']
-            kmax3D['TKEv'][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+            kmax3D['TKEv'][idxt],Es3D['TKEv'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
 
 
         if plotall:            
@@ -277,23 +278,43 @@ for idxt,tc in enumerate(time_hours3D):
                   colors=colors,linestyles=linestyles,
                   plotlines=plotlines,namefig=namefig)
         
+# Plot all LWP spectra
+
+namefig=pathout+'ELWP_'+var+'_'+prefix+'_'+tst
+ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(nt)]
+tl.plot_flux(kLWP,ELWPall,
+      kPBL=kPBLall,
+#      kcell=kmaxLWP,
+      y1lab=y2lab,
+      normalized=True,
+      plotlines=2,namefig=namefig)
+
+
 
 # Plot temporal evolution of aspect ratio
-namefig=pathout+'aspect_ratio_'+prefix
-Gamma = {}
-if var in kmax3D.keys():
-    print(var)
-    Gamma[var]  =kPBLall/kmax3D[var] #(2pi/kvmax)/(2pi/kPBL) 
-Gamma['LWP'] = kPBLall/kmaxLWP
-    
-maxh = np.max([Gamma[ij] for ij in Gamma.keys()])
-ylim = [0,math.ceil(maxh / 5) * 5]
-
-#LambdaEpsIn = kPBLall/kin
-#lambdaIn = {}
-#lambdaIn['LambdaEpsIn']=LambdaEpsIn
-tl.plot_time(time_hours3D,Gamma,
-             ylim=ylim,marker='o',
-             day=day_hours,
-             namex='Aspect Ratio (-)',
-             namefig=namefig)
+for cell in ["Cell_Size","Aspect_Ratio"]:
+    for typ in ["2D","3D"]:
+        namefig=pathout+cell+'_v'+typ+'_'+prefix
+        kmaxplot=kmax3D
+        if typ=='2D':
+            kmaxplot=kmax2D
+        Gamma = {}
+        for var in kmaxplot.keys():
+            if cell== "Cell_Size":
+                Gamma[var]   = 2*np.pi/kmaxplot[var] 
+                Gamma['LWP'] = 2*np.pi/kmaxLWP
+            else:
+                Gamma[var]   = kPBLall/kmaxplot[var] #(2pi/kvmax)/(2pi/kPBL) 
+                Gamma['LWP'] = kPBLall/kmaxLWP
+            
+        maxh = np.max([Gamma[ij] for ij in Gamma.keys()])
+        ylim = [0,math.ceil(maxh / 5) * 5]
+        
+        #LambdaEpsIn = kPBLall/kin
+        #lambdaIn = {}
+        #lambdaIn['LambdaEpsIn']=LambdaEpsIn
+        tl.plot_time(time_hours3D,Gamma,
+                     ylim=ylim,marker='o',
+                     day=day_hours,
+                     namex=''.join(cell.split('_')),
+                     namefig=namefig)

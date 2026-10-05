@@ -20,7 +20,7 @@ def make_kbins(k_min,k_max,nbins=50,binning='log'):
         # use geometric mean as center
         k_shell_centers = np.sqrt(k_bins[:-1] * k_bins[1:])
     else:
-        k_bins = np.linspace(0.0, k_max, nbins+1)
+        k_bins = np.linspace(k_min, k_max, nbins+1)
         k_shell_centers = 0.5*(k_bins[:-1] + k_bins[1:]) 
         
     return k_bins,k_shell_centers

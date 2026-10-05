@@ -25,14 +25,14 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= True
+testlocal= False
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
 
 
 if testlocal:
-    file = 'FIRZ4.1.V0001.OUT.003.nc' #'IHOP0.1.NWV01.OUT.013.nc' #'FIRZ4.1.V0001.OUT.003.nc'
+    file = 'FIRZ4.1.V0001.OUT.024.nc' #'IHOP0.1.NWV01.OUT.013.nc' #'FIRZ4.1.V0001.OUT.003.nc'
     fileinfo  = '../infos/info_run_Dell_FIRZ4.txt' #'../infos/info_run_Dell_IHOPNW.txt' #../infos/info_run_Dell_FIRZ4.txt'
 else:        
     file = sys.argv[1] # name of the file
@@ -117,6 +117,7 @@ buoyancy = stl.compute_buoyancy_from_thlm(THLM, RVT, RNPM, PABST)       # (nz, n
 
 # Substract horizontal mean
 THLM,RNPM,RVT,RCT,PABST =  [tl.anomcalc(tmp) for tmp in [THLM,RNPM,RVT,RCT,PABST]]
+LWP  = tl.anomcalc(LWP)
 anomHor = True
 if anomHor:
     UT = tl.anomcalc(UT)
@@ -147,6 +148,8 @@ table2 = {
 
 
 nbins = 100
+#binning = 'log'
+binning = 'notlog'
 
 ################################################
 #    Calculate 3D spectra flux and cascade     #
@@ -161,14 +164,14 @@ winds =  (UT_new, VT_new, WT_new)
 result = stl.compute_spectral_transfer(
     winds, P=PABST_new, B=buoyancy_new,
     dx=dx, dy=dy, dz=dz_new,z=z_new,
-    binning='log',nbins=nbins, nmin=nmin)
+    binning=binning,nbins=nbins, nmin=nmin)
 
 # Calculate LWP spectra
 winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
 resultLWP = stl.compute_spectral_transfer(
     winds2D, scalar=LWP,
     dx=dx, dy=dy,
-    binning='log',nbins=nbins, nmin=None)
+    binning=binning,nbins=nbins, nmin=None)
 # Check total variance 
 kLWP = resultLWP['Eout']['k']
 ELWP = resultLWP['Eout']['E_spec']
@@ -183,7 +186,7 @@ for scalar in table2.keys():
         tmp = stl.compute_spectral_transfer(
             winds, scalar=table2[scalar],
             dx=dx, dy=dy, dz=dz_new,
-            binning='log',nbins=nbins, nmin=nmin)
+            binning=binning,nbins=nbins, nmin=nmin)
         result_b[scalar] = tmp
         del tmp
         
@@ -237,11 +240,11 @@ if Filter3D:
         resultplus1[stcut]  = stl.compute_spectral_transfer(
             (Uh,Vh,Wh),
             dx=dx, dy=dy, dz=dz_new,
-            binning='log',nbins=nbins, nmin=nmin)
+            binning=binning,nbins=nbins, nmin=nmin)
         resultminus1[stcut] = stl.compute_spectral_transfer(
             (Uh2,Vh2,Wh2),
             dx=dx, dy=dy, dz=dz_new,
-            binning='log',nbins=nbins, nmin=nmin)        
+            binning=binning,nbins=nbins, nmin=nmin)        
         
         # Specific selection u<_a * (u_b * grad(u_c))
         # In classic case a=b=c. 
@@ -373,7 +376,7 @@ for idx,zi in enumerate(z_new):
     result2D = stl.compute_spectral_transfer(
         winds, 
         dx=dx, dy=dy,
-        binning='log',nbins=nbins)
+        binning=binning,nbins=nbins)
     E2D['TKE'][idx,:] =result2D['Eout']['E_spec']
     Pi2D['TKE'][idx,:]=result2D['Eout']['Pi_k']
     

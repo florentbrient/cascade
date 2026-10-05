@@ -680,7 +680,9 @@ def plot_flux(k,E,PI=None,
         
     if ss[0] < 6:
         if colors is None:
-            colors = ['b','r','g','c','m','y']
+            #colors = ['b','r','g','c','m','y']
+            colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 
+          'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
         if labels is None:
             time   = int(namefig.split('_')[-1])+dt
             labels = ['t+'+str(time)]
@@ -726,6 +728,7 @@ def plot_flux(k,E,PI=None,
         #mean  *= 2.
         k1scale = mean/offset #3e-2
         # pentes en -5/3
+        print(k1,k1scale)
         ax1.plot(k1,k1scale*k1**(-5/3.),color='gray',linewidth=3,linestyle='--',label=r'$\mathbf{k^{-5/3}}$')        
         
         if plotlines == 2:
@@ -848,7 +851,7 @@ def plot_time(time,Gamma,
               day=None,
               namex='Aspect Ratio (-)',
               namefig='test',title=None, namecaption=None,
-              ylim=None,colors=['orange','b','r','g','m'],
+              ylim=None,colors=None,
               marker=None,line='-',
               xsize=(14,10),fts=18,lw=2.5):
     
@@ -857,9 +860,21 @@ def plot_time(time,Gamma,
     
     # Modify time (by deltaT/2)
     time = time+(time[1]-time[0])/2.
-    
     timeticks = np.arange(0, time.max(), 4)
 
+    # Colors
+    if colors is None:
+        colors = [
+    'tab:blue',   # Bleu
+    'tab:orange', # Orange
+    'tab:green',  # Vert
+    'tab:red',    # Rouge
+    'tab:purple', # Violet
+    'tab:brown',  # Marron
+    'tab:pink',   # Rose
+    'tab:gray',   # Gris
+    'tab:olive'   # Olive (Vert foncé)
+        ]
     
     keys = list(Gamma.keys())
     print(keys)
