@@ -25,7 +25,7 @@ from coarse_graining_flux import compute_Pi_2D_map
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
@@ -147,9 +147,9 @@ table2 = {
 }
 
 
-nbins = 100
+nbins = 200
 #binning = 'log'
-binning = 'notlog'
+binning = 'log'
 
 ################################################
 #    Calculate 3D spectra flux and cascade     #

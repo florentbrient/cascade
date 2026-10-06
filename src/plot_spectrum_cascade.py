@@ -113,7 +113,7 @@ kmaxLWP = np.zeros(nt)
 kPBLall = np.zeros(nt)
 
 # Plotall
-plotall = False
+plotall = True
 
 
 for idxt,tc in enumerate(time_hours3D):
