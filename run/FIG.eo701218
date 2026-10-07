@@ -1,0 +1,16 @@
+------------------------------------------------------------------
+Job submit on jean-zay2 by rces071
+JobID=701218 Running_Node=r1i0n23
+Node=1 Task=1
+------------------------------------------------------------------
+FIRZ4
+False
+Traceback (most recent call last):
+  File "/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src//plot_spectrum_cascade.py", line 43, in <module>
+    prefix = sys.argv[1] # name of the prefix (FIRZ4)
+             ^^^
+NameError: name 'sys' is not defined. Did you forget to import 'sys'?
+
+real	1m17.397s
+user	0m1.823s
+sys	0m1.600s

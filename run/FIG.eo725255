@@ -1,0 +1,23 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=725255 Running_Node=r1i3n18
+Node=1 Task=1
+------------------------------------------------------------------
+FIRZ4
+False
+0 []
+0 []
+0 []
+0 []
+0 []
+0 []
+files  []
+Traceback (most recent call last):
+  File "/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src//plot_spectrum_cascade.py", line 86, in <module>
+    time1D = np.concatenate(timing2)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: need at least one array to concatenate
+
+real	0m42.383s
+user	0m1.665s
+sys	0m1.091s

@@ -13,15 +13,48 @@ import glob
 from netCDF4 import num2date
 import datetime
 import math
+import sys
+import os
+import socket
+from pathlib import Path
+
+# On Jean Zay
+#def on_jean_zay() -> bool:
+#    host = socket.getfqdn().lower()
+#    return (
+#        "jean-zay" in host
+#        or "idris" in host
+#        or "IDRIS_DEVICE" in os.environ    # variable posée par l'IDRIS
+#        or "SCRATCH" in os.environ and "WORK" in os.environ
+#    )
+
+def on_jean_zay() -> bool:
+    return (
+        os.environ.get("MY_MACHINE") == "jeanzay"
+        or str(Path.home()).startswith("/linkhome")
+        or Path("/lustre/fswork").exists()
+    )
+
+ON_JZ = on_jean_zay()
+print(ON_JZ)
+#stop
+if ON_JZ:
+    pathsrc= '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/' 
+    path1D = '/lustre/fsstor/projects/rech/whl/rces071/MNH-V5-7-0/'
+else:
+    pathsrc= '/home/fbrient/GitHub/cascade/'
+    path1D = '/home/fbrient/MNH/V5-7-0/'
 
 
-# Open all netcdf files
-pathin   = "../data/"
-prefix   = "FIRZ4" #"IHOP" #"FIR1k"
+# Open all netcdf file
+prefix = sys.argv[1] # name of the prefix (FIRZ4)
+
+pathin   = pathsrc+"data/"
+#prefix   = "FIRZ4" #"IHOP" #"FIR1k"
 filein0  = pathin+'Cascade_'+prefix+'*XXX.nc'
 
 # Dir for figures
-pathout = "../figures/"
+pathout = pathsrc+"figures/"
 pathout+= prefix+'/'
 tl.mkdir(pathout)
 
@@ -33,10 +66,11 @@ for var in varall:
     data[var] = tl.read_netcdfs(filein, dim='time',concat=False)
     
 ############ Open 1D to find time of sunlight
-path0 = '/home/fbrient/MNH/V5-7-0/*/'+prefix+'/'
-file0 = path0+'*'+'.1.'+'*'+'.000'+'*'+'.nc'
+path1D+='*/'+prefix+'/'
+file0 = path1D+'*'+'.1.'+'*'+'.000'+'*'+'.nc'
 # List of files with glob
 files = sorted(glob.glob(file0))
+print('files ',files)
 timing2 = []
 datarad = []
 for idx,file in enumerate(files):
@@ -113,7 +147,7 @@ kmaxLWP = np.zeros(nt)
 kPBLall = np.zeros(nt)
 
 # Plotall
-plotall = True
+plotall = False
 
 
 for idxt,tc in enumerate(time_hours3D):
@@ -246,7 +280,10 @@ for idxt,tc in enumerate(time_hours3D):
             
             # Plot Ek, Eperp and Epara on the same figure  
             namefig=pathout+'E3D_'+var+'_'+prefix+'_'+tst
-            tl.plot_flux(np.array(k3D),np.array(E3D),PI=np.array(Pi3D),
+            #print(k3D)
+            #print(k3D.shape)
+            tl.plot_flux(#k3D,E3D,PI=Pi3D,
+                  np.array(k3D,dtype=object),np.array(E3D,dtype=object),PI=np.array(Pi3D,dtype=object),
                   kPBL=kPBL,#kin=kin[idxt],
                   kcell=kmaxLWP[idxt],
                   y1lab=y1lab, 

@@ -1,0 +1,41 @@
+------------------------------------------------------------------
+Job submit on jean-zay3 by rces071
+JobID=707533 Running_Node=r1i4n20
+Node=1 Task=10
+------------------------------------------------------------------
+FIZ4c.1.V0009.OUT.003.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0009.OUT.003.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[151200.]
+Error in opening  LWP
+PBL Height:  567.5
+Calculate PI_k2 function took 2149531.431 ms
+variance Spectra  0.0004097853250758164
+variance Field  0.0004047500392881774
+The spectra represent 101.2440482517295% of the var of the field
+THLM_new
+Calculate PI_k2 function took 1115047.064 ms
+RNPM_new
+Calculate PI_k2 function took 1120363.234 ms
+RCT_new
+Calculate PI_k2 function took 1122694.714 ms
+PABST_new
+Calculate PI_k2 function took 1122202.040 ms
+buoyancy_new
+Calculate PI_k2 function took 1128611.984 ms
+variance Spectra  0.31327091082231956
+variance Field  0.31414269778814896
+The spectra represent 99.7224869551425% of the mean of the field
+
+real	137m49.502s
+user	119m0.949s
+sys	17m17.726s

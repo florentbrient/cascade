@@ -7,7 +7,7 @@
 ##SBATCH --partition=prepost
 #SBATCH -o CASC.eo%j   #
 #SBATCH -e CASC.eo%j   #
-#SBATCH -t 01:59:00    # time limit
+#SBATCH -t 02:59:00    # time limit
 #SBATCH --export=NONE
 #SBATCH -A whl@cpu # put here you account/projet name
 

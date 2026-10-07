@@ -278,7 +278,7 @@ def createnew(vv,DATA,var1D,idxzi=None):
             RCT = tryopen(name,DATA)
             if RCT is not None:
                 ss  = RCT.shape
-                print(ss)
+                #print(ss)
                 if len(ss)==3.:
                     zz = repeat(data[2],(ss[1],ss[2]))
                     tmp = np.zeros((1,ss[1],ss[2]))
@@ -646,7 +646,7 @@ def plot_flux(k,E,PI=None,
     if ss[0] != len(kPBL):
         kPBL  = np.repeat(kPBL[np.newaxis, :], ss[0], axis=0)  # Adds new axis first
     
-    print(ss,ss[0],len(ss),normalized)
+    #print(ss,ss[0],len(ss),normalized)
     if len(ss) > 1 or normalized:
         normalized=True
         # Normalisation of k by kPBL
@@ -728,7 +728,7 @@ def plot_flux(k,E,PI=None,
         #mean  *= 2.
         k1scale = mean/offset #3e-2
         # pentes en -5/3
-        print(k1,k1scale)
+        #print(k1,k1scale)
         ax1.plot(k1,k1scale*k1**(-5/3.),color='gray',linewidth=3,linestyle='--',label=r'$\mathbf{k^{-5/3}}$')        
         
         if plotlines == 2:
@@ -918,7 +918,9 @@ def plot_time(time,Gamma,
     ax.set_ylabel(namex,fontsize=fts)
     
     ax.set_xlim(0, time.max())
-    ax.set_xticks(timeticks,size=fts)   
+    #ax.set_xticks(timeticks,size=fts) #old version Python   
+    ax.set_xticks(timeticks)
+    ax.tick_params(axis='x', labelsize=fts)
 
 
     ax.tick_params(axis='both', labelsize=fts)
