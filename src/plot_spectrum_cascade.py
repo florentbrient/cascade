@@ -317,7 +317,7 @@ for idxt,tc in enumerate(time_hours3D):
         
 # Plot all LWP spectra
 
-namefig=pathout+'ELWP_'+var+'_'+prefix+'_'+tst
+namefig=pathout+'ELWP_'+prefix
 ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(nt)]
 tl.plot_flux(kLWP,ELWPall,
       kPBL=kPBLall,

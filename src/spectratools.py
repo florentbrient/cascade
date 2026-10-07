@@ -77,7 +77,7 @@ def compute_spectral_transfer(winds,
     """
 
     # Retrieve winds
-    if len(winds)==3:
+    if len(winds)==3 and winds[-1] is not None:
         U, V, W  = winds
         Ub,Vb,Wb = winds
         Uc,Vc,Wc = winds

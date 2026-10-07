@@ -22,10 +22,11 @@ import sys
 import coarse_graining_flux as cgf
 import pylab as plt
 from coarse_graining_flux import compute_Pi_2D_map
+import spectrum2d as s2
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
@@ -174,8 +175,19 @@ resultLWP = stl.compute_spectral_transfer(
     binning=binning,nbins=nbins, nmin=None)
 # Check total variance 
 kLWP = resultLWP['Eout']['k']
-ELWP = resultLWP['Eout']['E_spec']
+ELWP = resultLWP['Eout']['E_spec'] #E_spec
 tl.checkvariance(kLWP,ELWP,LWP)
+
+# Second test
+nmin_s2 = 16
+sp = s2.radial_spectrum(LWP, dx, nbins=nbins, nmin=nmin_s2)
+ls = s2.length_scales(LWP, dx)   # lambda_mean, lambda_ogive, lambda_peak
+# Check total variance 
+kLWP2 = sp['k']
+ELWP2 = sp['E'] #E_spec
+tl.checkvariance(kLWP2,ELWP2,LWP)
+
+
 
 # Compute spectra and cascade for all variables in table2:
 result_b ={}
@@ -364,8 +376,15 @@ if coarsegraining:
 ################################################
 #    Calculate 2D spectra flux and cascade     #
 ################################################
-var_to_plot = ['TKE']+list(result_b.keys())[:]
+TKEvarall   = ['TKE','TKEh','TKEv']
+TKEdict={
+        "TKE":  ['E_spec','Pi_k'],
+        "TKEh": ['E_h_spec','Pi_h_k'],
+        "TKEv": ['E_v_spec','Pi_v_k'],
+        }
+var_to_plot = TKEvarall+list(result_b.keys())[:]
 E2D,Pi2D = {},{}
+E2Db,ls2D = {},{}
 for var in var_to_plot:
     E2D[var]  = np.zeros((nz,nbins+1))*np.nan
     Pi2D[var] = np.zeros((nz,nbins+1))*np.nan
@@ -373,26 +392,64 @@ for idx,zi in enumerate(z_new):
     
     # TKE full
     winds =  (UT_new[idx,:,:], VT_new[idx,:,:], WT_new[idx,:,:])
+    
     result2D = stl.compute_spectral_transfer(
         winds, 
         dx=dx, dy=dy,
         binning=binning,nbins=nbins)
-    E2D['TKE'][idx,:] =result2D['Eout']['E_spec']
-    Pi2D['TKE'][idx,:]=result2D['Eout']['Pi_k']
-    
     if idx==0:
         k2D = result2D['Eout']['k']
+        
+    for TKEvar in TKEvarall:
+        E2D[TKEvar][idx,:] =result2D['Eout'][TKEdict[TKEvar][0]]
+        Pi2D[TKEvar][idx,:]=result2D['Eout'][TKEdict[TKEvar][1]]
+            
+        field0,field1,field2 = winds
+        if TKEvar == 'TKEh':
+            field0,field1 = winds[0],winds[1]
+            field2 = None
+        if TKEvar == 'TKEh':
+            field0 = winds[2]
+            field1,field2 = None,None
+        
+        sp2 = s2.radial_spectrum(field0, dx, 
+                                nbins=nbins, nmin=nmin_s2,
+                                field1 = field1, field2 = field2)
+        #plt.loglog(sp['k'], sp['E'])
+        ls2 = s2.length_scales(field0, dx,
+                              field1 = field1, field2 = field2)   # lambda_mean, lambda_ogive, lambda_peak
+        if idx==0:
+            k2Db  = sp2['k']
+            for var in var_to_plot:
+                E2Db[var] = np.zeros((nz,len(k2Db)))*np.nan
+                ls2D[var] = np.zeros(nz)*np.nan
+        E2Db[TKEvar][idx,:] = sp2['E']
+        ls2D[TKEvar][idx]   = ls2['k_peak']
+    
+    
+    # Check total variance 
+    #ktmp  = sp['k']
+    #Etmp  = sp['E'] #E_spec
+    #tl.checkvariance(ktmp,Etmp,LWP)
+    
+
 
     for scalar in table2.keys():
         if not any(text in scalar for text in ('UT', 'VT', 'WT')):
-            tmp = table2[scalar]
+            tmp = table2[scalar][idx,:,:]
             resulttmp = stl.compute_spectral_transfer(winds, 
                                                       dx=dx, dy=dy,
-                                                      scalar=tmp[idx,:,:],
+                                                      scalar=tmp,
                                                       nbins=nbins)
             
             E2D[scalar][idx,:] =resulttmp['Eout']['E_spec']
             Pi2D[scalar][idx,:]=resulttmp['Eout']['Pi_k']
+            
+            sp2 = s2.radial_spectrum(tmp, dx, nbins=nbins, nmin=nmin_s2)
+            ls2 = s2.length_scales(tmp, dx)   # lambda_mean, lambda_ogive, lambda_peak
+            E2Db[scalar][idx,:]  = sp2['E']
+            ls2D[scalar][idx]    = ls2['k_peak']
+
     
     
 
@@ -421,7 +478,7 @@ for var in var_to_plot:
 
 
     # Simplification to write netcdf file
-    if var=='TKE':
+    if 'TKE' in var:
         r = result.copy()
     else:
         r = result_b[var].copy()
@@ -442,7 +499,8 @@ for var in var_to_plot:
                 "kpara":r['kpara'],
                 "nx":nx,"ny":ny,"nz":nz,
                 "zlist":idxzlist,
-                "k2D":k2D,"kLWP":kLWP
+                "k2D":k2D,"k2Db":k2Db,
+                "kLWP":kLWP,"kLWP2":kLWP2
                 }
     )
     
@@ -480,11 +538,21 @@ for var in var_to_plot:
         ds["Piperp"]  = (("kperp",), r['Piperp'])
         ds["Epara"]   = (("kpara",), r['Epara'])
         ds["Tpara"]   = (("kpara",), r['Tpara'])
-        ds["Pipara"]  = (("kpara",), r['Pipara'])
+        ds["Pipara"]  = (("kpara",), r['Pipara'])    
+    #LWP
+    ds['ELWP'] = (("kLWP"),ELWP)
+    # spectrum 2
+    ds['ELWP2'] = (("kLWP2"),ELWP2)
+    ds['lsLWPmean'] = ls['k_mean']
+    ds['lsLWPpeak'] = ls['k_peak']
+
+    #2D
     ds['E2D']  = (("z","k2D"),E2D[var]) 
     ds['Pi2D'] = (("z","k2D"),Pi2D[var])
-    ds['ELWP'] = (("kLWP"),ELWP)
-
+    ds['E2Db'] = (("z","k2Db"),E2Db[var]) 
+    ds['ls2D'] = (("z"),ls2D[var]) 
+    
+    
         
     if Filter3D:
         ds2 = ds.copy()
@@ -522,11 +590,6 @@ for var in var_to_plot:
     
 
     del r,file_netcdf1
-
-
-
-
-
 
 
 
