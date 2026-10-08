@@ -1,0 +1,48 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=780557 Running_Node=r1i4n22
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.012.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIRZ4/FIRZ4.1.V0001.OUT.012.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[68400.]
+Error in opening  LWP
+PBL Height:  582.5
+Calculate PI_k2 function took 463084.609 ms
+variance Spectra  0.000509165066630024
+variance Field  0.0005023477429397125
+The spectra represent 101.35709252925412% of the var of the field
+variance Spectra  0.0005041789480856802
+variance Field  0.0005023477429397125
+The spectra represent 100.3645293866061% of the var of the field
+THLM_new
+Calculate PI_k2 function took 238979.547 ms
+RNPM_new
+Calculate PI_k2 function took 238945.666 ms
+RCT_new
+Calculate PI_k2 function took 242921.093 ms
+PABST_new
+Calculate PI_k2 function took 241595.967 ms
+buoyancy_new
+Calculate PI_k2 function took 245686.479 ms
+variance Spectra  0.20998088360679396
+variance Field  0.2099703378010584
+The spectra represent 100.00502252167902% of the mean of the field
+
+real	31m18.091s
+user	23m56.981s
+sys	6m11.638s

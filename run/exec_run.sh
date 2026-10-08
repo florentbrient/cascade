@@ -4,7 +4,7 @@
 #machine=Dell
 machine=JZ
 
-case="FIZ4c"
+case="FIRZ4"
 ln -sf ../infos/info_run_${machine}_${case}.txt ../infos/info_run.txt
 ln -sf ../infos/files_${case}.txt ../infos/files.txt
 

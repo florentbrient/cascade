@@ -1,0 +1,48 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=780545 Running_Node=r1i1n12
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.001.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIRZ4/FIRZ4.1.V0001.OUT.001.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[28800.]
+Error in opening  LWP
+PBL Height:  592.5
+Calculate PI_k2 function took 538784.327 ms
+variance Spectra  1.3110900932117017e-06
+variance Field  1.293537549043977e-06
+The spectra represent 101.35694121757017% of the var of the field
+variance Spectra  1.2914769619844941e-06
+variance Field  1.293537549043977e-06
+The spectra represent 99.84070141133469% of the var of the field
+THLM_new
+Calculate PI_k2 function took 276900.454 ms
+RNPM_new
+Calculate PI_k2 function took 281586.211 ms
+RCT_new
+Calculate PI_k2 function took 271583.649 ms
+PABST_new
+Calculate PI_k2 function took 271359.719 ms
+buoyancy_new
+Calculate PI_k2 function took 273880.360 ms
+variance Spectra  0.0033738740776055234
+variance Field  0.0033725447753916093
+The spectra represent 100.03941540594549% of the mean of the field
+
+real	35m34.634s
+user	27m52.585s
+sys	6m32.134s

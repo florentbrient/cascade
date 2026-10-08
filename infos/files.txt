@@ -1,1 +1,1 @@
-../infos/files_FIZ4c.txt
+../infos/files_FIRZ4.txt
