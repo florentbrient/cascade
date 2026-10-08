@@ -1,0 +1,48 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=746305 Running_Node=r2i5n14
+Node=1 Task=10
+------------------------------------------------------------------
+FIZ4c.1.V0001.OUT.004.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0001.OUT.004.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[39600.]
+Error in opening  LWP
+PBL Height:  587.5
+Calculate PI_k2 function took 1944375.472 ms
+variance Spectra  0.0001678437889766589
+variance Field  0.00016538333303132773
+The spectra represent 101.48772908384008% of the var of the field
+variance Spectra  0.00016430823845085119
+variance Field  0.00016538333303132773
+The spectra represent 99.34993777137572% of the var of the field
+THLM_new
+Calculate PI_k2 function took 1001622.052 ms
+RNPM_new
+Calculate PI_k2 function took 1000381.216 ms
+RCT_new
+Calculate PI_k2 function took 997325.147 ms
+PABST_new
+Calculate PI_k2 function took 1001242.174 ms
+buoyancy_new
+Calculate PI_k2 function took 1004680.926 ms
+variance Spectra  0.489254115419408
+variance Field  0.4891681987685201
+The spectra represent 100.01756382592004% of the mean of the field
+
+real	127m0.240s
+user	106m8.917s
+sys	19m11.426s

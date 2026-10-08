@@ -26,7 +26,7 @@ import spectrum2d as s2
 
 
 # Test on local file (by default: False)
-testlocal= True
+testlocal= False
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = False
