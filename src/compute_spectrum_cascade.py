@@ -388,6 +388,8 @@ E2Db,ls2D = {},{}
 for var in var_to_plot:
     E2D[var]  = np.zeros((nz,nbins+1))*np.nan
     Pi2D[var] = np.zeros((nz,nbins+1))*np.nan
+    
+k2Db = None
 for idx,zi in enumerate(z_new):
     
     # TKE full
@@ -418,7 +420,7 @@ for idx,zi in enumerate(z_new):
         #plt.loglog(sp['k'], sp['E'])
         ls2 = s2.length_scales(field0, dx,
                               field1 = field1, field2 = field2)   # lambda_mean, lambda_ogive, lambda_peak
-        if idx==0:
+        if k2Db is None:
             k2Db  = sp2['k']
             for var in var_to_plot:
                 E2Db[var] = np.zeros((nz,len(k2Db)))*np.nan
@@ -451,8 +453,6 @@ for idx,zi in enumerate(z_new):
             ls2D[scalar][idx]    = ls2['k_peak']
 
     
-    
-
 
 
 ################################################

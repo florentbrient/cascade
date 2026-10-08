@@ -47,7 +47,9 @@ else:
 
 
 # Open all netcdf file
-prefix = sys.argv[1] # name of the prefix (FIRZ4)
+#prefix = sys.argv[1] # name of the prefix (FIRZ4)
+prefix = 'FIRZ4' 
+
 
 pathin   = pathsrc+"data/"
 #prefix   = "FIRZ4" #"IHOP" #"FIR1k"
@@ -59,7 +61,7 @@ pathout+= prefix+'/'
 tl.mkdir(pathout)
 
 # Variables
-varall  = ['TKE','THLM','RNPM','RCT','PABST','buoyancy']
+varall  = ['TKE','TKEh','TKEv','THLM','RNPM','RCT','PABST','buoyancy']
 data    = {}
 for var in varall:
     filein    = filein0.replace('XXX',var)
@@ -162,8 +164,10 @@ for idxt,tc in enumerate(time_hours3D):
     kpara = data['TKE'][idxt].kpara.values
     z     = data['TKE'][idxt].z.values
     k2D   = data['TKE'][idxt].k2D.values
+    k2Db  = data['TKE'][idxt].k2Db.values
     kLWP  = data['TKE'][idxt].kLWP.values
-    nk,nk2= len(kv),len(k2D)
+    kLWP2 = data['TKE'][idxt].kLWP2.values
+    nk,nk2= len(kv),len(k2Db)
     nz    = len(z)
 
 
@@ -216,28 +220,27 @@ for idxt,tc in enumerate(time_hours3D):
     idxpbl  = tl.near(z,PBL)
 
     # Find LWP cell
-    ELWP = data['TKE'][idxt]['ELWP']
-#    cond = ~np.isnan(ELWP)
-#    ELWP = ELWP[cond]
-#    kLWPh= kLWP[cond] # to modify
-    kmaxLWP[idxt],EsLWP,_ = tl.findkvmax(kLWP,ELWP,sigma=sigma)
+    ELWP2 = data['TKE'][idxt]['ELWP2']
+    kmaxLWP[idxt],EsLWP,_ = tl.findkvmax(kLWP2,ELWP2,sigma=sigma)
+
+
     
     for var in varall:
         
         # Find cell size
         Etmp = data[var][idxt]['E_spec']
         kmax3D[var][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
-        Etmp = data[var][idxt]['E2D']
-        kmax2D[var][idxt],Es2D[var][idxt,1:],_ = tl.findkvmax(k2D,Etmp.T,sigma=sigma,weights=dz)
+        Etmp = data[var][idxt]['E2Db']
+        kmax2D[var][idxt],Es2D[var][idxt,:],_  = tl.findkvmax(k2Db,Etmp.T,sigma=sigma,weights=dz)
         for idxz,zz in enumerate(z):
-            kmax2Dz[var][idxt,idxz],_,_        = tl.findkvmax(k2D,Etmp[idxz,:],sigma=sigma)
+            kmax2Dz[var][idxt,idxz],_,_        = tl.findkvmax(k2Db,Etmp[idxz,:],sigma=sigma)
 
         # Calculate cell size for TKEv and TKEh
-        if var=="TKE":
-            Etmp = data[var][idxt]['E_h_spec']
-            kmax3D['TKEh'][idxt],Es3D['TKEh'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
-            Etmp = data[var][idxt]['E_v_spec']
-            kmax3D['TKEv'][idxt],Es3D['TKEv'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+        #if var=="TKE":
+        #    Etmp = data[var][idxt]['E_h_spec']
+        #    kmax3D['TKEh'][idxt],Es3D['TKEh'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+        #    Etmp = data[var][idxt]['E_v_spec']
+        #    kmax3D['TKEv'][idxt],Es3D['TKEv'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
 
 
         if plotall:            
@@ -317,13 +320,27 @@ for idxt,tc in enumerate(time_hours3D):
         
 # Plot all LWP spectra
 
+timeint = np.arange(0,nt,2)
+
 namefig=pathout+'ELWP_'+prefix
-ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(nt)]
+ELWPall = [data['TKE'][ij]['ELWP'].values for ij in timeint]
 tl.plot_flux(kLWP,ELWPall,
       kPBL=kPBLall,
 #      kcell=kmaxLWP,
       y1lab=y2lab,
       normalized=True,
+      plotlines=2,namefig=namefig)
+
+namefig=pathout+'ELWP2_'+prefix
+ELWPall = [(data['TKE'][ij]['ELWP2'].values+data['TKE'][ij+1]['ELWP2'].values)/2.
+           for ij in timeint]
+kLWP2   = data['TKE'][0]['kLWP2'].values
+tl.plot_flux(kLWP2,ELWPall,
+      kPBL=kPBLall[timeint],
+#      kcell=kmaxLWP,
+      y1lab=y2lab,
+      normalized=True,
+      labels=timeint+1,
       plotlines=2,namefig=namefig)
 
 
