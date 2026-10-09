@@ -149,7 +149,7 @@ kmaxLWP = np.zeros(nt)
 kPBLall = np.zeros(nt)
 
 # Plotall
-plotall = False
+plotall = True
 
 
 for idxt,tc in enumerate(time_hours3D):
@@ -320,12 +320,12 @@ for idxt,tc in enumerate(time_hours3D):
         
 # Plot all LWP spectra
 
-timeint = np.arange(0,nt,2)
+timeint = np.arange(0,int(nt/2),2)
 
 namefig=pathout+'ELWP_'+prefix
 ELWPall = [data['TKE'][ij]['ELWP'].values for ij in timeint]
 tl.plot_flux(kLWP,ELWPall,
-      kPBL=kPBLall,
+      kPBL=kPBLall[timeint],
 #      kcell=kmaxLWP,
       y1lab=y2lab,
       normalized=True,

@@ -160,34 +160,14 @@ binning = 'log'
 #nmin = 20
 nmin = None
 
-# Compute spectra and cascade from 3D fields
+# Winds
 winds =  (UT_new, VT_new, WT_new)
+
+# Compute spectra and cascade from 3D fields
 result = stl.compute_spectral_transfer(
     winds, P=PABST_new, B=buoyancy_new,
     dx=dx, dy=dy, dz=dz_new,z=z_new,
     binning=binning,nbins=nbins, nmin=nmin)
-
-# Calculate LWP spectra
-winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
-resultLWP = stl.compute_spectral_transfer(
-    winds2D, scalar=LWP,
-    dx=dx, dy=dy,
-    binning=binning,nbins=nbins, nmin=None)
-# Check total variance 
-kLWP = resultLWP['Eout']['k']
-ELWP = resultLWP['Eout']['E_spec'] #E_spec
-tl.checkvariance(kLWP,ELWP,LWP)
-
-# Second test
-nmin_s2 = 16
-sp = s2.radial_spectrum(LWP, dx, nbins=nbins, nmin=nmin_s2)
-ls = s2.length_scales(LWP, dx)   # lambda_mean, lambda_ogive, lambda_peak
-# Check total variance 
-kLWP2 = sp['k']
-ELWP2 = sp['E'] #E_spec
-tl.checkvariance(kLWP2,ELWP2,LWP)
-
-
 
 # Compute spectra and cascade for all variables in table2:
 result_b ={}
@@ -212,10 +192,8 @@ TKE3D  = 0.5*(pow(tl.anomcalc(UT_new),2.)
             +pow(tl.anomcalc(WT_new),2.))
 tl.checkvariance(kc,E_k3_mean,TKE3D,type='mean')
 
-
+# Save inverse cascade
 cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Eout']['Pi_k'], kPBL, method="trapz")
-
-    
     
 # For 3D filtering
 idxzlist = None
@@ -376,6 +354,29 @@ if coarsegraining:
 ################################################
 #    Calculate 2D spectra flux and cascade     #
 ################################################
+
+# Calculate LWP spectra
+# First 
+winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
+resultLWP = stl.compute_spectral_transfer(
+    winds2D, scalar=LWP,
+    dx=dx, dy=dy,
+    binning=binning,nbins=nbins, nmin=None)
+# Check total variance 
+kLWP = resultLWP['Eout']['k']
+ELWP = resultLWP['Eout']['E_spec'] #E_spec
+tl.checkvariance(kLWP,ELWP,LWP)
+
+# Second test
+nmin_s2 = 16
+spLWP = s2.radial_spectrum(LWP, dx, nbins=nbins, nmin=nmin_s2)
+lsLWP = s2.length_scales(LWP, dx)   # lambda_mean, lambda_ogive, lambda_peak
+# Check total variance 
+kLWP2 = spLWP['k']
+ELWP2 = spLWP['E'] #E_spec
+tl.checkvariance(kLWP2,ELWP2,LWP)
+
+# All others variables
 TKEvarall   = ['TKE','TKEh','TKEv']
 TKEdict={
         "TKE":  ['E_spec','Pi_k'],
@@ -383,6 +384,73 @@ TKEdict={
         "TKEv": ['E_v_spec','Pi_v_k'],
         }
 var_to_plot = TKEvarall+list(result_b.keys())[:]
+
+E2Dmean,Pi2Dmean = {},{}
+E2Dbmean,ls2Dmean = {},{}
+for var in var_to_plot:
+    E2Dmean[var]  = np.zeros(nbins+1)*np.nan
+    Pi2Dmean[var] = np.zeros(nbins+1)*np.nan
+    
+# First mean TKE
+windsmean =  [np.mean(tmp,axis=0) for tmp in winds]
+k2Db = None
+for TKEvar in TKEvarall:
+    field0,field1,field2 = windsmean
+    if TKEvar == 'TKEh':
+        field0,field1 = windsmean[0],windsmean[1]
+        field2 = None
+    elif TKEvar == 'TKEv':
+        field0 = windsmean[2]
+        field1,field2 = None,None
+    
+    if TKEvar=='TKE':
+        resultM = stl.compute_spectral_transfer(
+            windsmean,
+            dx=dx, dy=dy, dz=dz_new,z=z_new,
+            binning=binning,nbins=nbins, nmin=nmin)
+        
+        TKEmean= 0.5*(pow(tl.anomcalc(windsmean[0]),2.)
+                    +pow(tl.anomcalc(windsmean[1]),2.)\
+                    +pow(tl.anomcalc(windsmean[2]),2.))
+        tl.checkvariance(resultM['Eout']['k'],resultM['Eout']['E_spec'],TKEmean,type='mean')
+
+    
+    E2Dmean[TKEvar] =resultM['Eout'][TKEdict[TKEvar][0]]
+    Pi2Dmean[TKEvar]=resultM['Eout'][TKEdict[TKEvar][1]]
+    
+    sp2 = s2.radial_spectrum(field0, dx, 
+                            nbins=nbins, nmin=nmin_s2,
+                            field1 = field1, field2 = field2)
+    #plt.loglog(sp['k'], sp['E'])
+    ls2 = s2.length_scales(field0, dx,
+                          field1 = field1, field2 = field2)   # lambda_mean, lambda_ogive, lambda_peak
+    if k2Db is None:
+        k2Db  = sp2['k']
+        for var in var_to_plot:
+            E2Dbmean[var] = np.zeros(len(k2Db))*np.nan
+            ls2Dmean[var] = np.nan
+    E2Dbmean[TKEvar]   = sp2['E']
+    ls2Dmean[TKEvar]   = ls2['k_peak']
+        
+# For the other variables
+for scalar in table2.keys():
+    if not any(text in scalar for text in ('UT', 'VT', 'WT')):
+        tmp = np.mean(table2[scalar],axis=0)
+        resulttmp = stl.compute_spectral_transfer(windsmean, 
+                                                  dx=dx, dy=dy,
+                                                  scalar=tmp,
+                                                  nbins=nbins)
+        
+        E2Dmean[scalar] =resulttmp['Eout']['E_spec']
+        Pi2Dmean[scalar]=resulttmp['Eout']['Pi_k']
+        
+        sp2 = s2.radial_spectrum(tmp, dx, nbins=nbins, nmin=nmin_s2)
+        ls2 = s2.length_scales(tmp, dx)   # lambda_mean, lambda_ogive, lambda_peak
+        E2Dbmean[scalar]  = sp2['E']
+        ls2Dmean[scalar]  = ls2['k_peak']
+        
+# Same thing at each altitude
+
 E2D,Pi2D = {},{}
 E2Db,ls2D = {},{}
 for var in var_to_plot:
@@ -410,7 +478,7 @@ for idx,zi in enumerate(z_new):
         if TKEvar == 'TKEh':
             field0,field1 = winds[0],winds[1]
             field2 = None
-        if TKEvar == 'TKEh':
+        elif TKEvar == 'TKEv':
             field0 = winds[2]
             field1,field2 = None,None
         
@@ -452,7 +520,7 @@ for idx,zi in enumerate(z_new):
             E2Db[scalar][idx,:]  = sp2['E']
             ls2D[scalar][idx]    = ls2['k_peak']
 
-    
+
 
 
 ################################################
@@ -543,10 +611,15 @@ for var in var_to_plot:
     ds['ELWP'] = (("kLWP"),ELWP)
     # spectrum 2
     ds['ELWP2'] = (("kLWP2"),ELWP2)
-    ds['lsLWPmean'] = ls['k_mean']
-    ds['lsLWPpeak'] = ls['k_peak']
+    ds['lsLWPmean'] = lsLWP['k_mean']
+    ds['lsLWPpeak'] = lsLWP['k_peak']
 
     #2D
+    ds['E2Dm']  = (("z","k2D"),E2Dmean[var]) 
+    ds['Pi2Dm'] = (("z","k2D"),Pi2Dmean[var])
+    ds['E2Dbm'] = (("z","k2Db"),E2Dbmean[var]) 
+    ds['ls2Dm'] = (("z"),ls2Dmean[var]) 
+    
     ds['E2D']  = (("z","k2D"),E2D[var]) 
     ds['Pi2D'] = (("z","k2D"),Pi2D[var])
     ds['E2Db'] = (("z","k2Db"),E2Db[var]) 
