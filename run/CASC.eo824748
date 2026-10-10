@@ -1,0 +1,137 @@
+------------------------------------------------------------------
+Job submit on jean-zay3 by rces071
+JobID=824748 Running_Node=r1i1n25
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.001.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIRZ4/FIRZ4.1.V0001.OUT.001.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[28800.]
+Error in opening  LWP
+PBL Height:  592.5
+Calculate PI_k2 function took 610287.369 ms
+THLM_new
+Calculate PI_k2 function took 318355.846 ms
+RNPM_new
+Calculate PI_k2 function took 313988.688 ms
+RCT_new
+Calculate PI_k2 function took 316777.470 ms
+PABST_new
+Calculate PI_k2 function took 314070.639 ms
+buoyancy_new
+Calculate PI_k2 function took 314749.630 ms
+variance Spectra  0.0033738740776055234
+variance Field  0.0033725447753916093
+The spectra represent 100.03941540594549% of the mean of the field
+variance Spectra  1.3110900932117017e-06
+variance Field  1.293537549043977e-06
+The spectra represent 101.35694121757017% of the var of the field
+variance Spectra  1.2914769619844941e-06
+variance Field  1.293537549043977e-06
+The spectra represent 99.84070141133469% of the var of the field
+variance Spectra  0.0006636134938544135
+variance Field  0.0006546874115857551
+The spectra represent 101.36341131824086% of the mean of the field
+Traceback (most recent call last):
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/variable.py", line 143, in as_variable
+    obj = Variable(dims_, data_, *attrs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/variable.py", line 364, in __init__
+    super().__init__(
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/namedarray/core.py", line 264, in __init__
+    self._dims = self._parse_dimensions(dims)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/namedarray/core.py", line 508, in _parse_dimensions
+    raise ValueError(
+ValueError: dimensions ('z', 'k2D') must have the same length as the number of data dimensions, ndim=1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src//compute_spectrum_cascade.py", line 618, in <module>
+    ds['E2Dm']  = (("z","k2D"),E2Dmean[var]) 
+    ~~^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 1678, in __setitem__
+    self.update({key: value})
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 5872, in update
+    merge_result = dataset_update_method(self, other)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/merge.py", line 1055, in dataset_update_method
+    return merge_core(
+           ^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/merge.py", line 699, in merge_core
+    collected = collect_variables_and_indexes(aligned, indexes=indexes)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/merge.py", line 358, in collect_variables_and_indexes
+    variable = as_variable(variable, name=name, auto_convert=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/variable.py", line 145, in as_variable
+    raise error.__class__(
+ValueError: Variable 'E2Dm': Could not convert tuple of form (dims, data[, attrs, encoding]): (('z', 'k2D'), array([           nan, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 2.69118093e-06, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 1.40834599e-05, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.55124602e-05,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.16182645e-06,
+       0.00000000e+00, 0.00000000e+00, 3.83966299e-06, 3.20535312e-05,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       2.52200102e-05, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       3.27966363e-06, 2.76394409e-05, 1.94502845e-05, 0.00000000e+00,
+       2.44693614e-05, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 6.96391788e-05, 0.00000000e+00, 6.33315757e-05,
+       0.00000000e+00, 8.45744432e-06, 8.45812831e-06, 6.01653469e-06,
+       2.49892054e-05, 3.47788879e-05, 2.04292184e-05, 0.00000000e+00,
+       1.28461158e-05, 4.22743856e-06, 6.16892439e-05, 2.16166127e-05,
+       4.47493382e-05, 2.53004397e-05, 7.16095533e-05, 2.02979252e-05,
+       9.60165321e-06, 6.06332117e-05, 3.99441001e-05, 1.21952717e-04,
+       5.32707335e-05, 0.00000000e+00, 1.06567321e-04, 1.29463459e-04,
+       5.97951630e-05, 1.36308405e-04, 8.81697510e-05, 3.11858157e-04,
+       1.30987211e-04, 1.39097420e-04, 3.13623491e-04, 1.70794000e-04,
+       2.56706013e-04, 2.78441639e-04, 2.34914701e-04, 4.33895861e-04,
+       5.29749869e-04, 3.93615799e-04, 7.55744049e-04, 5.02824051e-04,
+       9.54769389e-04, 1.09270352e-03, 1.09905461e-03, 1.34860022e-03,
+       1.98548349e-03, 1.78749556e-03, 1.92883684e-03, 2.86040523e-03,
+       3.12339605e-03, 4.82947177e-03, 3.53875774e-03, 5.27621146e-03,
+       6.37297462e-03, 7.92361043e-03, 1.05117601e-02, 1.39648410e-02,
+       1.20959510e-02, 1.91569278e-02, 2.12466590e-02, 2.36883710e-02,
+       2.88708959e-02, 3.90902395e-02, 4.61306865e-02, 4.97151131e-02,
+       5.72086149e-02, 7.37751358e-02, 8.59228380e-02, 1.12666697e-01,
+       1.22910596e-01, 1.45468513e-01, 1.70877035e-01, 2.05927604e-01,
+       2.25351516e-01, 2.78808797e-01, 2.64188653e-01, 3.56886754e-01,
+       3.81840342e-01, 3.88332282e-01, 4.40871009e-01, 4.19713927e-01,
+       4.32097063e-01, 4.57423491e-01, 4.16508912e-01, 4.28585007e-01,
+       3.85014747e-01, 3.21407904e-01, 2.87390374e-01, 2.51112219e-01,
+       2.05480631e-01, 1.55499374e-01, 9.54738196e-02, 6.90130377e-02,
+       5.23044007e-02, 2.78456885e-02, 1.89942627e-02, 1.26152827e-02,
+       7.10330096e-03, 4.64747327e-03, 3.43854994e-03, 2.13023397e-03,
+       1.76727415e-03, 1.38454316e-03, 1.13100233e-03, 1.03874020e-03,
+       8.94939348e-04, 7.37571666e-04, 6.38120306e-04, 6.27387659e-04,
+       5.06749634e-04, 4.66133158e-04, 4.50422590e-04, 4.07065878e-04,
+       3.67887407e-04, 3.31982311e-04, 3.02675986e-04, 2.90358807e-04,
+       2.83200867e-04, 2.75537367e-04, 2.78214487e-04, 2.71088885e-04,
+       2.49232674e-04, 2.31926834e-04, 2.10154538e-04, 1.77898146e-04,
+       1.67594889e-04, 1.28742746e-04, 8.89968071e-05, 6.29984560e-05,
+       3.93968646e-05, 2.58584571e-05, 2.22972995e-05, 1.59662356e-05,
+       1.32726836e-05, 1.01658232e-05, 7.72023938e-06, 3.54537366e-06,
+       1.26323308e-06])) to Variable.
+
+real	40m55.949s
+user	32m19.376s
+sys	6m59.132s

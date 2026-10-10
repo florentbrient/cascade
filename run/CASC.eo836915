@@ -1,0 +1,51 @@
+------------------------------------------------------------------
+Job submit on jean-zay3 by rces071
+JobID=836915 Running_Node=r2i1n24
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0004.OUT.022.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:416: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_v_k[i] = np.mean(p_f * dpw_f)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectratools.py:418: ComplexWarning: Casting complex values to real discards the imaginary part
+  phi_h_k[i] = +np.mean(p_f * divf)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIRZ4/FIRZ4.1.V0004.OUT.022.nc
+*****
+Error in opening  THLM
+Error in opening  THLM
+Error in opening  RNPM
+Error in opening  RNPM
+[363600.]
+Error in opening  LWP
+PBL Height:  555.0
+Calculate PI_k2 function took 469013.505 ms
+THLM_new
+Calculate PI_k2 function took 249136.598 ms
+RNPM_new
+Calculate PI_k2 function took 247963.770 ms
+RCT_new
+Calculate PI_k2 function took 248384.649 ms
+PABST_new
+Calculate PI_k2 function took 247773.664 ms
+buoyancy_new
+Calculate PI_k2 function took 248778.814 ms
+variance Spectra  0.5746477289971761
+variance Field  0.5749931123602765
+The spectra represent 99.93993260863897% of the mean of the field
+variance Spectra  0.0003390868613555203
+variance Field  0.0003363128308296929
+The spectra represent 100.82483636410296% of the var of the field
+variance Spectra  0.0003348268979765751
+variance Field  0.0003363128308296929
+The spectra represent 99.55816944317826% of the var of the field
+variance Spectra  0.15516064830185375
+variance Field  0.1510469710804514
+The spectra represent 102.72344237820651% of the mean of the field
+
+real	31m0.557s
+user	24m48.455s
+sys	6m0.348s

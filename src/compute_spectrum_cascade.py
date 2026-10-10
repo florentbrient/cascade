@@ -615,10 +615,10 @@ for var in var_to_plot:
     ds['lsLWPpeak'] = lsLWP['k_peak']
 
     #2D
-    ds['E2Dm']  = (("z","k2D"),E2Dmean[var]) 
-    ds['Pi2Dm'] = (("z","k2D"),Pi2Dmean[var])
-    ds['E2Dbm'] = (("z","k2Db"),E2Dbmean[var]) 
-    ds['ls2Dm'] = (("z"),ls2Dmean[var]) 
+    ds['E2Dm']  = (("k2D"),E2Dmean[var]) 
+    ds['Pi2Dm'] = (("k2D"),Pi2Dmean[var])
+    ds['E2Dbm'] = (("k2Db"),E2Dbmean[var]) 
+    ds['ls2Dm'] = ls2Dmean[var] 
     
     ds['E2D']  = (("z","k2D"),E2D[var]) 
     ds['Pi2D'] = (("z","k2D"),Pi2D[var])
