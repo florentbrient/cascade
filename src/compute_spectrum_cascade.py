@@ -211,7 +211,7 @@ cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Eout']['Pi_k'], kPBL, 
 # For 3D filtering
 idxzlist = None
 if Filter3D:
-    idxzlist   = np.arange(0,1.2,0.1) #np.arange(0,1.2,0.1)
+    idxzlist   = np.arange(0.1,1.0,0.1) #np.arange(0,1.2,0.1)
     idxzfilter = [tl.near(z_new, ij*PBLheight) for ij in idxzlist]
     zfilter    = z_new[idxzfilter]
 
