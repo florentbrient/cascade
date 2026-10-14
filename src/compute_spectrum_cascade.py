@@ -23,13 +23,19 @@ import coarse_graining_flux as cgf
 import pylab as plt
 from coarse_graining_flux import compute_Pi_2D_map
 import spectrum2d as s2
+import spectrum3d as s3
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
-Filter3D = False
-coarsegraining = False
+Filter3D = True
+coarsegraining = True
+
+minimum= False
+if Filter3D or coarsegraining:
+    minimum= True
+
 
 
 if testlocal:
@@ -133,9 +139,15 @@ weights  = np.insert(weights, 0, weights[0])  # Assume first weight equals first
 dz_new = int(max(10,np.max(np.diff(zpbl))))
 
 # Interpolate the verical axis
-table = (UT, VT, WT, THLM, RNPM, RVT, RCT, PABST, buoyancy)
+if minimum:
+    table = (UT, VT, WT)
+else:
+    table = (UT, VT, WT, THLM, RNPM, RVT, RCT, PABST, buoyancy) 
 table_new, z_new = tl.interp_to_uniform_z(table, zpbl, dz_new=dz_new)
-(UT_new, VT_new, WT_new, THLM_new, RNPM_new, RVT_new, RCT_new, PABST_new, buoyancy_new) = table_new
+if minimum:
+    (UT_new, VT_new, WT_new) = table_new
+else:
+    (UT_new, VT_new, WT_new, THLM_new, RNPM_new, RVT_new, RCT_new, PABST_new, buoyancy_new) = table_new
 nx,ny,nz = len(x),len(y),len(z_new)
 
         
@@ -165,7 +177,8 @@ winds =  (UT_new, VT_new, WT_new)
 
 # Compute spectra and cascade from 3D fields
 result = stl.compute_spectral_transfer(
-    winds, P=PABST_new, B=buoyancy_new,
+    winds, 
+    #P=PABST_new, B=buoyancy_new,
     dx=dx, dy=dy, dz=dz_new,z=z_new,
     binning=binning,nbins=nbins, nmin=nmin)
 
@@ -521,7 +534,24 @@ for idx,zi in enumerate(z_new):
             ls2D[scalar][idx]    = ls2['k_peak']
 
 
+#### Pressure #####
+import pressure_terms as pt
+u,v,w,p = UT_new, VT_new, WT_new, PABST_new
+res = pt.compute_pressure_terms(u,v,w,p, z_new, dx, dy,# rho=rho_ref,
+                              scale="log", nbins=100, nmin=5)
 
+# 1) Parseval : somme des coquilles = <p'w'>_xy
+pw = ((p - p.mean(axis=(1, 2), keepdims=True)) * w).mean(axis=(1, 2))
+print("Parseval  max|sum_k F_p - <p'w'>| / max|<p'w'>| = %.2e"
+          % (np.abs(res["F_p"].sum(1) - pw).max() / np.abs(pw).max()))
+# 2) P_h = -R (continuité exacte)
+print("P_h + R   max|.| / max|R|                       = %.2e"
+          % (np.abs(res["P_h"] + res["R"]).max() / np.abs(res["R"]).max()))
+# 3) fermeture P_h + P_v = T_p (erreur de discrétisation en dz^2), hors 2 niveaux de bord
+s = slice(2, -2)
+rel = np.sqrt((res["resid"][s] ** 2).mean() / (res["P_v"][s] ** 2).mean())
+print("resid     rms(P_h+P_v-T_p) / rms(P_v)           = %.2e" % rel)
+ 
 
 ################################################
 #               Saving files                   #
@@ -558,6 +588,7 @@ for var in var_to_plot:
         "E": (("kc",), rout['E_k']),
         "T": (("kc",), rout['T_k']),
         "Pi": (("kc",), rout['Pi_k']),
+        "mode_count": (("kc",), rout['mode_count']),
         },
         coords={"kv":r['k'], 
                 "kc":rout['k_shell_centers'],

@@ -157,7 +157,7 @@ def radial_spectrum(field, dx, dy=None, dz=None, nbins=150, nmin=8, kmax="nyquis
     elif kmax == "corner":
         kcut = kh.max() * (1 + 1e-9)
     else:
-        kcut = float(kmax)
+        kcut = float(kh.max())
 
     sel = (kh > 0) & (kh <= kcut)
     kv, Pv = kh[sel], P[sel]

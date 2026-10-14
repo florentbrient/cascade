@@ -17,6 +17,9 @@ import sys
 import os
 import socket
 from pathlib import Path
+import pandas as pd
+import spectratools as stl
+
 
 # On Jean Zay
 #def on_jean_zay() -> bool:
@@ -34,6 +37,16 @@ def on_jean_zay() -> bool:
         or str(Path.home()).startswith("/linkhome")
         or Path("/lustre/fswork").exists()
     )
+# Mean every 2 time step
+def make_moy(tmp,nb=2):    
+    new_tmp = pd.Series(tmp).groupby(lambda x: x // nb).mean().to_numpy()
+    return new_tmp
+
+def make_zavg(tmp,z,idx,deltaz,PBL):
+    tmp = np.mean(tmp[(z >= (idx - deltaz) * PBL) & ((z + deltaz) < idx * PBL), :], axis=0)
+    return tmp
+    
+
 
 ON_JZ = on_jean_zay()
 print(ON_JZ)
@@ -62,6 +75,7 @@ tl.mkdir(pathout)
 
 # Variables
 varall  = ['TKE','TKEh','TKEv','THLM','RNPM','RCT','PABST','buoyancy']
+varall  = ['TKE','TKEh','TKEv','THLM','RNPM','buoyancy'] #,'RCT','PABST','buoyancy']
 data    = {}
 for var in varall:
     filein    = filein0.replace('XXX',var)
@@ -141,15 +155,23 @@ plotlines=2
 # Smooth to find kmax
 sigma = 1
 # For 2D plot
-zplot    = [0,0.1,0.25,0.5,0.75,0.90,1] 
+#zplot    = [0,0.1,0.25,0.5,0.75,0.90,1] 
+zplot    = [0.1,0.5,0.9] 
+deltaz   = 0.1 # averaged over a layer of +/-0.1
 zplotstr = [str(idx) for idx in zplot]
 
 # Initialize variables for global plot
 kmaxLWP = np.zeros(nt)
 kPBLall = np.zeros(nt)
 
+# Colors separation Pi_hh, Pi_hv...
+cassep   = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
+labsep   = ['Total','hh','hv','vh','vv']
+colsep   = ['b','c','m','m','c']
+linsep   = ['-','--','--',':',':']
+
 # Plotall
-plotall = True
+plotall = False
 
 
 for idxt,tc in enumerate(time_hours3D):
@@ -199,12 +221,15 @@ for idxt,tc in enumerate(time_hours3D):
     if idxt==0:
         #EsLWP   = np.zeros((nt,nk))
         kmax3D, kmax2D, Es3D, Es2D = {},{},{},{}
+        kmax2Dm, Es2Dm = {},{}
         kmax2Dz ={}
         for var in varall:
             kmax3D[var] =np.zeros(nt)*np.nan
             Es3D[var]   =np.zeros((nt,nk))*np.nan
             kmax2D[var] =np.zeros(nt)*np.nan
             Es2D[var]   =np.zeros((nt,nk2))*np.nan
+            kmax2Dm[var]=np.zeros(nt)*np.nan
+            Es2Dm[var]  =np.zeros((nt,nk2))*np.nan
             # nz+5 for safety
             kmax2Dz[var]=np.zeros((nt,nz+5))*np.nan
         for var in ['TKEh','TKEv']:
@@ -230,6 +255,8 @@ for idxt,tc in enumerate(time_hours3D):
         # Find cell size
         Etmp = data[var][idxt]['E_spec']
         kmax3D[var][idxt],Es3D[var][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
+        Etmp = data[var][idxt]['E2Dbm']
+        kmax2Dm[var][idxt],Es2Dm[var][idxt,:],_ = tl.findkvmax(k2Db,Etmp,sigma=sigma)
         Etmp = data[var][idxt]['E2Db']
         kmax2D[var][idxt],Es2D[var][idxt,:],_  = tl.findkvmax(k2Db,Etmp.T,sigma=sigma,weights=dz)
         for idxz,zz in enumerate(z):
@@ -243,11 +270,53 @@ for idxt,tc in enumerate(time_hours3D):
         #    kmax3D['TKEv'][idxt],Es3D['TKEv'][idxt,1:],_ = tl.findkvmax(kv,Etmp,sigma=sigma)
 
 
-        if plotall:            
+        if plotall:           
+            # Plot E/Pi for the mean field            # Plot Ek, Eperp and Epara on the same figure  
+            namefig=pathout+'E2Dm_'+var+'_'+prefix+'_'+tst
+            colors=['tab:purple', 'tab:gray', 'tab:olive']
+            E2Dm  = data[var][idxt]['E2Dbm'].values
+            tl.plot_flux([k2Db],[E2Dm],
+                  kPBL=kPBL,
+                  kcell=kmaxLWP[idxt],
+                  y1lab=y1lab, colors=colors,
+                  plotlines=2,namefig=namefig)
+            namefig=pathout+'Pi2Dm_'+var+'_'+prefix+'_'+tst            
+            Pi2Dm = data[var][idxt]['Pi2Dm']
+            tl.plot_flux([k2D],[Pi2Dm],
+                  kPBL=kPBL,
+                  kcell=kmaxLWP[idxt],
+                  logy=False,
+                  y1lab=y2lab, colors=colors,
+                  namefig=namefig)
+
+            
+            
+            
+            # Plot E for different altitude
+            namefig=pathout+'E_z_'+var+'_'+prefix+'_'+tst
+            
+            #Erzall = []
+            #for idx in zplot:
+            #    idxm = (z>=(idx-deltaz)*PBL) & ((z+deltaz)<idx*PBL)
+            #    Erzall += [np.mean(data[var][idxt]['E2Db'][idxm,:],axis=0)]
+            #Erzall = [np.mean(data[var][idxt]['E2Db'][tl.near(z,idx*PBL),:]) for idx in zplot]
+
+            Erzall = [make_zavg(data[var][idxt]['E2Db'],z,idx,deltaz,PBL) for idx in zplot]
+            tl.plot_flux(k2Db,Erzall,
+                      kPBL=kPBL,#kin=kin[idxt],
+                      kcell=kmaxLWP[idxt],
+                      y1lab=y1lab,labels=zplotstr,
+                      normalized=True,
+                      plotlines=0,namefig=namefig)   
+            
+ 
+            
             # Plot Pi for different altitude
             namefig=pathout+'PI_z_'+var+'_'+prefix+'_'+tst
-            Erzall = [data[var][idxt]['Pi2D'][tl.near(z,idx*PBL),:] for idx in zplot]
-            tl.plot_flux(k2D,Erzall,
+            #Erzall = [data[var][idxt]['Pi2D'][tl.near(z,idx*PBL),:] for idx in zplot]
+            Pirzall = [make_zavg(data[var][idxt]['Pi2D'],z,idx,deltaz,PBL) for idx in zplot]
+
+            tl.plot_flux(k2D,Pirzall,
                       kPBL=kPBL,#kin=kin[idxt],
                       kcell=kmaxLWP[idxt],
                       logy=False,\
@@ -295,13 +364,13 @@ for idxt,tc in enumerate(time_hours3D):
                   plotlines=2,namefig=namefig)
             
             # Plot separation Pi_hh, Pi_hv...
-            chtmp      = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
-            chtmplab   = ['Total','hh','hv','vh','vv']
-            colors     = ['b','c','m','m','c']
-            linestyles = ['-','--','--',':',':']
+            #chtmp      = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
+            #chtmplab   = ['Total','hh','hv','vh','vv']
+            #colors     = ['b','c','m','m','c']
+            #linestyles = ['-','--','--',':',':']
             
             Pi3D = []
-            for ij,ch in enumerate(chtmp):
+            for ij,ch in enumerate(cassep):
                 Pitmp  = data[var][idxt][ch]
     #            idxtmp = ~np.isnan(Pitmp)
                 Pi3D  += [Pitmp] #[idxtmp]]
@@ -314,61 +383,155 @@ for idxt,tc in enumerate(time_hours3D):
                   kcell=kmaxLWP[idxt],
                   logy=False,
                   y1lab=y2lab,
-                  labels=chtmplab,normalized=True,
-                  colors=colors,linestyles=linestyles,
+                  labels=labsep,normalized=True,
+                  colors=colsep,linestyles=linsep,
                   plotlines=plotlines,namefig=namefig)
         
 # Plot all LWP spectra
 
-timeint = np.arange(0,int(nt/2),2)
+nb = 3
+timeint = np.arange(0,nt,nb)
+timehere = make_moy(time_hours3D,nb=nb)
+
 
 namefig=pathout+'ELWP_'+prefix
-ELWPall = [data['TKE'][ij]['ELWP'].values for ij in timeint]
+ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(nt)]
+ELWPall  = make_moy(ELWPall,nb=nb)
+kPBLall2 = make_moy(kPBLall,nb=nb)
+
 tl.plot_flux(kLWP,ELWPall,
-      kPBL=kPBLall[timeint],
+      kPBL=kPBLall2,
 #      kcell=kmaxLWP,
-      y1lab=y2lab,
+      y1lab=y1lab,
       normalized=True,
       plotlines=2,namefig=namefig)
 
 namefig=pathout+'ELWP2_'+prefix
-ELWPall = [(data['TKE'][ij]['ELWP2'].values+data['TKE'][ij+1]['ELWP2'].values)/2.
-           for ij in timeint]
+ELWPall = [data['TKE'][ij]['ELWP2'].values for ij in range(nt)]
+ELWPall = make_moy(ELWPall,nb=nb)
+
 kLWP2   = data['TKE'][0]['kLWP2'].values
 tl.plot_flux(kLWP2,ELWPall,
-      kPBL=kPBLall[timeint],
+      kPBL=kPBLall2,
 #      kcell=kmaxLWP,
-      y1lab=y2lab,
+      y1lab=y1lab,
       normalized=True,
-      labels=timeint+1,
+      labels=timehere,
       plotlines=2,namefig=namefig)
 
+# colors, lines, markers
+nb = 2
+timehere = make_moy(time_hours3D,nb=nb)
 
+clm = {}
+clm['line'], clm['color'], clm['marker'] = {},{},{}
+for var in varall+['LWP']:
+    clm['line'] [var]= '-' 
+    clm['color'][var] = 'tab:blue'
+    clm['marker'][var] = ''
+
+clm['color']['LWP'] =  "k" 
+clm['line']['LWP'] =  ""  
+clm['marker']['LWP'] =  "o"   
+clm['line']['TKEh'] =  "--"   
+clm['line']['TKEv'] =  "-."   
+clm['color']['THLM'] =  "tab:red" 
+clm['color']['RNPM'] =  "tab:green" 
+clm['color']['buoyancy'] =  "tab:orange" 
+
+dayhere  = make_moy(day_hours,nb=nb)
 
 # Plot temporal evolution of aspect ratio
 for cell in ["Cell_Size","Aspect_Ratio"]:
-    for typ in ["2D","3D"]:
+    for typ in ["2D","2Dm","3D"]:
         namefig=pathout+cell+'_v'+typ+'_'+prefix
         kmaxplot=kmax3D
         if typ=='2D':
             kmaxplot=kmax2D
+        if typ=='2Dm':
+            kmaxplot=kmax2Dm
         Gamma = {}
         for var in kmaxplot.keys():
             if cell== "Cell_Size":
-                Gamma[var]   = 2*np.pi/kmaxplot[var] 
                 Gamma['LWP'] = 2*np.pi/kmaxLWP
+                Gamma[var]   = 2*np.pi/kmaxplot[var] 
             else:
-                Gamma[var]   = kPBLall/kmaxplot[var] #(2pi/kvmax)/(2pi/kPBL) 
                 Gamma['LWP'] = kPBLall/kmaxLWP
-            
+                Gamma[var]   = kPBLall/kmaxplot[var] #(2pi/kvmax)/(2pi/kPBL)
+                
+            Gamma[var] = make_moy(Gamma[var],nb=nb)
+        Gamma['LWP'] = make_moy(Gamma['LWP'],nb=nb)
+        
         maxh = np.max([Gamma[ij] for ij in Gamma.keys()])
         ylim = [0,math.ceil(maxh / 5) * 5]
+        
         
         #LambdaEpsIn = kPBLall/kin
         #lambdaIn = {}
         #lambdaIn['LambdaEpsIn']=LambdaEpsIn
-        tl.plot_time(time_hours3D,Gamma,
-                     ylim=ylim,marker='o',
-                     day=day_hours,
+        tl.plot_time(timehere,Gamma,
+                     ylim=ylim,
+                     marker=clm['marker'],
+                     colors=clm['color'],
+                     lines=clm['line'],
+                     day=dayhere,
                      namex=''.join(cell.split('_')),
                      namefig=namefig)
+
+
+# Compute cascade
+#casall = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
+
+nb = 2
+maxPi=10
+
+namefig=pathout+'PiNeg_sep_'+prefix
+CnegAll = {}
+for cas in cassep:
+    CnegAll[cas] = np.zeros(nt)*np.nan
+    for ij in range(nt):
+        tmp = data['TKE'][ij][cas]
+        CnegAll[cas][ij],_ = stl.integrate_negative_cascade(kv, tmp, kPBLall[ij]*0.9, 
+                                                            maxPi=maxPi,
+                                                            method="trapz")
+    CnegAll[cas] =  make_moy(CnegAll[cas],nb=nb)
+    
+# Plot Negative cascade
+timehere = make_moy(time_hours3D,nb=nb)
+dayhere  = make_moy(day_hours,nb=nb)
+
+linsep2= {}
+for ij,icas in enumerate(cassep):
+    linsep2[icas] = linsep[ij]
+ylim = None
+tl.plot_time(timehere,CnegAll,
+             ylim=ylim,
+             colors=colsep,lines=linsep2,
+             day=dayhere,
+             namex='Integrated cascade',
+             namefig=namefig)
+
+
+nb = 2
+timehere = make_moy(time_hours3D,nb=nb)
+dayhere  = make_moy(day_hours,nb=nb)
+namefig=pathout+'PiNeg_'+prefix
+PinegAll = {}
+PinegAll['TKE']  = np.array([data['TKE'][ij]['Pineg'].values for ij in range(nt)])
+PinegAll['THLM'] = {}
+for ij in range(nt):
+    tmp = data['THLM'][ij]['PI_k']
+    PinegAll['THLM'][ij],_ = stl.integrate_negative_cascade(kv, tmp, kPBLall[ij], 
+                                                        method="trapz")
+
+for var in PinegAll.keys():
+    PinegAll[var] = make_moy(PinegAll[var],nb=nb)
+    PinegAll[var] /= np.min(PinegAll[var])
+
+maxh = np.max(PinegAll['TKE'])
+ylim = None #[0,math.ceil(maxh / 5) * 5]
+tl.plot_time(timehere,PinegAll,
+             ylim=ylim,marker='o',
+             day=dayhere,
+             namex='Neg Cascade',
+             namefig=namefig)

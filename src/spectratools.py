@@ -48,6 +48,7 @@ def compute_spectral_transfer(winds,
                               dx=50.0, dy=50.0, dz=10.0,
                               z=None,
                               scalar=None,P=None,B=None,
+                              E_layer=None,
                               windsb=None,windsc=None,
                               norm='ortho', dealiasing_23=False,
                               binning='log', k_bins=None,
@@ -179,7 +180,7 @@ def compute_spectral_transfer(winds,
                             P=P,k_z=kz)
     
     Eout_layer = None
-    if Nz is not None:
+    if Nz is not None and E_layer is not None:
         Eout_layer = compute_E_layer(k_bins, dx, dy,
                                      U, V, W,                       # (nz, ny, nx) physical fields
                                      N_u, N_v, N_w,                 # u·∇u components (physical, dealiased)
@@ -1007,7 +1008,9 @@ ce qui gère naturellement le changement de variable log.
 """
 
 
-def integrate_negative_cascade(k, Pi, kH, method="trapz", refine_crossings=True):
+def integrate_negative_cascade(k, Pi, kH, 
+                               maxPi=0,
+                               method="trapz", refine_crossings=True):
     """
     Intègre Pi(k) sur ln(k), de min(k) à kH, en ne gardant que Pi < 0.
     
@@ -1078,7 +1081,7 @@ def integrate_negative_cascade(k, Pi, kH, method="trapz", refine_crossings=True)
     # On annule les portions où Pi >= 0 : l'intégrande reste continue
     # (vaut 0 hors des zones de cascade inverse) au lieu de "sauter"
     # des points, ce qui serait faux pour une intégrale numérique.
-    integrand = np.where(Pi < 0, Pi, 0.0)
+    integrand = np.where(Pi < maxPi, Pi, 0.0)
 
     if method == "trapz":
         trapz_fn = getattr(np, "trapezoid", None) or np.trapz

@@ -700,7 +700,10 @@ def plot_flux(k,E,PI=None,
     
     # Plot Spectra and Energy
     for ij in range(ss[0]):
-        ktmp = np.squeeze(k[ij][:])
+        ktmp = k
+        if len(ss)>1 or len(ktmp)>1:
+            ktmp = np.squeeze(k[ij][:])
+        #print(ij,ktmp,E[ij])
         ax1.semilogx(ktmp,E[ij][:],lw=lw, color=colors[ij], ls=linestyles[ij], label=labels[ij])
         if smooth is not None:
             ax1.semilogx(ktmp,smooth[ij][:],lw=lw-1, color='r',ls='--')
@@ -852,14 +855,14 @@ def plot_time(time,Gamma,
               namex='Aspect Ratio (-)',
               namefig='test',title=None, namecaption=None,
               ylim=None,colors=None,
-              marker=None,line='-',
+              marker=None,lines='-',
               xsize=(14,10),fts=18,lw=2.5):
     
     # Start plot
     fig, ax = plt.subplots(1,1,figsize=xsize)
     
     # Modify time (by deltaT/2)
-    time = time+(time[1]-time[0])/2.
+    #time = time+(time[1]-time[0])/2.
     timeticks = np.arange(0, time.max(), 4)
 
     # Colors
@@ -875,18 +878,35 @@ def plot_time(time,Gamma,
     'tab:gray',   # Gris
     'tab:olive'   # Olive (Vert foncé)
         ]
+
     
     keys = list(Gamma.keys())
     print(keys)
     if namecaption is None:
         namecaption = keys
+        
+    ls,ms = lines, marker
 
     # Plot all Gamma
     for ij,key in enumerate(keys):
+        if lines != '-':
+            ls = lines[key]
+        if type(marker) == dict:
+            ms = marker[key]
+        if type(colors) == dict:
+            color = colors[key]
+        else:
+            color = colors[ij]
+
+        
+        
         ax.plot(time,Gamma[key],
-                lw=lw,ls=line,
+                lw=lw,
                 label=namecaption[ij],
-                color=colors[ij], marker=marker)
+                color=color,
+                ls=ls,
+                marker=ms)
+        
     if lambdaIn is not None:
         color='k'
         ax.plot(time,lambdaIn,color=color,ls='--',lw=lw,label=r'$\epsilon_{in}$')
@@ -898,10 +918,11 @@ def plot_time(time,Gamma,
 #                ax.axvspan(time[indices[0]], time[indices[-1]+1], 
                 ax.axvspan(time[indices[0]], time[indices[-1]], 
                            alpha=0.3, color='moccasin', linewidth=0)
-    
+
     # Wood and Hartmann 2006
     #k1,k2 =30.,40.
     #ax.axhspan(k1, k2, color="grey", alpha=0.3)  # Adjust alpha for transparency
+    plt.axhline(y=0,color='k',lw=lw)
     
     # Legends
     ax.legend(title=None,shadow=True,numpoints=1,loc=2,
