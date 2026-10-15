@@ -168,6 +168,37 @@ def findpbltop(tmp,zz,offset=0.25):
     return idx
 
 
+# Interpolate grid
+
+def _shift(a, axis, d):
+    """Décalage spectral de +d/2 le long de `axis` (champ périodique)."""
+    n = a.shape[axis]
+    k = 2*np.pi*np.fft.rfftfreq(n, d)
+    shp = [1]*a.ndim; shp[axis] = -1
+    A = np.fft.rfft(a, axis=axis) * np.exp(1j*k*d/2).reshape(shp)
+    return np.fft.irfft(A, n=n, axis=axis)
+
+def _rng(ds, name):
+    """c_grid_dynamic_range "2:301" (Fortran, base 1, inclusif) -> slice Python."""
+    a, b = map(int, ds[name].c_grid_dynamic_range.split(":"))
+    return slice(a - 1, b)
+
+def to_mass_grid(ds,t=0):
+    """Ramène UT, VT, WT sur la grille de THT (domaine physique, sans halo)."""
+    sk, skw = _rng(ds, "level"), _rng(ds, "level_w")
+    sj, si = _rng(ds, "nj"), _rng(ds, "ni")
+    dx = float(ds["ni"][2] - ds["ni"][1])
+    dy = float(ds["nj"][2] - ds["nj"][1])
+    # plage de masse en x,y aussi pour u et v : écarte le doublon périodique (ni_u, nj_v)
+    u = ds["UT"][t, sk,  sj, si].astype(np.float64)
+    v = ds["VT"][t, sk,  sj, si].astype(np.float64)
+    w = ds["WT"][t, skw, sj, si].astype(np.float64)
+    uc, vc = _shift(u, -1, dx), _shift(v, -2, dy)
+    wc = 0.5*(w[:-1] + w[1:])
+    assert wc.shape == uc.shape, "niveaux w / masse incohérents"
+    return uc, vc, wc, (sk, sj, si)   # mêmes slices pour THT
+
+
 # Interpolate to isotropic z-grid
 def interp_to_uniform_z(U, z_old, dz_new=10.0):
     """

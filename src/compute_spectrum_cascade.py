@@ -16,21 +16,37 @@ import netCDF4 as nc
 import tools as tl
 import spectratools as stl
 #import cloudmetrics as cm
-import time
+#import time
 import xarray as xr
 import sys
 import coarse_graining_flux as cgf
-import pylab as plt
+#import pylab as plt
 from coarse_graining_flux import compute_Pi_2D_map
 import spectrum2d as s2
-import spectrum3d as s3
+#import spectrum3d as s3
+import Constants as CC
+
+def makethlm(THT,PABST,RCT=None):
+    #thetal = theta - L/Cp Theta/T Ql
+    if RCT is None: # No clouds
+        RCT = np.zeros(THT.shape)
+    data = THT -(\
+        (THT/tl.tht2temp(THT,PABST))\
+        *(CC.RLVTT/CC.RCP)*RCT)
+    return data
+
+def makernpm(data,RCT=None):
+    if RCT is not None: 
+        data += RCT
+    return data
+    
 
 
 # Test on local file (by default: False)
-testlocal= True
+testlocal= False
 # Run Filtered cascade (by default: True)
-Filter3D = True
-coarsegraining = True
+Filter3D = False
+coarsegraining = False
 
 minimum= False
 if Filter3D or coarsegraining:
@@ -61,11 +77,25 @@ print('*****')
 # Open the netcdf file
 DATA    = nc.Dataset(file,'r')
 
-# OPEN DATA (only here)
-variables = ['UT','VT','WT','PABST']
-UT,VT,WT,PABST = [np.squeeze(DATA[var]) for var in variables]
-variables = ['THLM','RNPM','RVT','RCT']
-THLM,RNPM,RVT,RCT = [tl.createnew(var,DATA,var1D) for var in variables]
+
+# Interpolate over identical grid
+interp3D = True
+if interp3D: 
+    UT,VT,WT, (sk, sj, si) = tl.to_mass_grid(DATA)
+    variables = ['PABST','THT','RVT','RCT']
+    PABST,THT,RVT,RCT = [ DATA[var][0, sk, sj, si].astype(np.float64) for var in variables]
+    THLM = makethlm(THT,PABST,RCT=RCT)
+    RNPM = makernpm(RVT,RCT=RCT)
+else:
+    # OPEN DATA (only here)
+    variables = ['UT','VT','WT','PABST']
+    UT,VT,WT,PABST = [np.squeeze(DATA[var]) for var in variables]
+    variables = ['THLM','RNPM','RVT','RCT']
+    THLM,RNPM,RVT,RCT = [tl.createnew(var,DATA,var1D) for var in variables]
+    
+    # Clean data (remove boundaries)
+    UT,VT,WT,PABST    = [tl.removebounds(tmp) for tmp in [UT,VT,WT,PABST]]
+    THLM,RNPM,RVT,RCT = [tl.removebounds(tmp) for tmp in [THLM,RNPM,RVT,RCT]]
 
 # Open dimensions
 #nxnynz,data1D,dx,dy,dz= tl.dimensions(DATA,var1D)
@@ -88,14 +118,11 @@ else:
 if nvar is not None:
     LWP = tl.createnew(nvar,DATA,var1D)
     LWP = np.squeeze(LWP)
+    LWP = tl.removebounds(LWP)
 
 # Delete DATA to save memory
 del DATA
 
-# Clean data (remove boundaries)
-UT,VT,WT,PABST    = [tl.removebounds(tmp) for tmp in [UT,VT,WT,PABST]]
-THLM,RNPM,RVT,RCT = [tl.removebounds(tmp) for tmp in [THLM,RNPM,RVT,RCT]]
-LWP               = tl.removebounds(LWP)
 x,y,z,dz          = [tl.removebounds(tmp) for tmp in [x,y,z,dz]]
 
 # Find Boundary-layer height (zi)
@@ -160,7 +187,7 @@ table2 = {
 }
 
 
-nbins = 200
+nbins = 100
 #binning = 'log'
 binning = 'log'
 
@@ -174,11 +201,12 @@ nmin = None
 
 # Winds
 winds =  (UT_new, VT_new, WT_new)
-
+print('Print 3D wind cascade')
 # Compute spectra and cascade from 3D fields
 result = stl.compute_spectral_transfer(
     winds, 
     #P=PABST_new, B=buoyancy_new,
+    test_Hz=True, # only for TKE
     dx=dx, dy=dy, dz=dz_new,z=z_new,
     binning=binning,nbins=nbins, nmin=nmin)
 
@@ -188,6 +216,7 @@ for scalar in table2.keys():
     if not any(text in scalar for text in ('UT', 'VT', 'WT')):
         print(scalar)
         # Buoyancy flux
+        print('Print 3D cascade of '+scalar)
         tmp = stl.compute_spectral_transfer(
             winds, scalar=table2[scalar],
             dx=dx, dy=dy, dz=dz_new,
@@ -535,22 +564,37 @@ for idx,zi in enumerate(z_new):
 
 
 #### Pressure #####
-import pressure_terms as pt
-u,v,w,p = UT_new, VT_new, WT_new, PABST_new
-res = pt.compute_pressure_terms(u,v,w,p, z_new, dx, dy,# rho=rho_ref,
-                              scale="log", nbins=100, nmin=5)
+pressureplot= False
+if pressureplot:
+    import pressure_terms as pt
+    import pressure_figures as pf
+    u,v,w,p,b = UT_new, VT_new, WT_new, PABST_new, buoyancy_new
+    rho_ref = 1.2+(-0.00001)*z_new
 
-# 1) Parseval : somme des coquilles = <p'w'>_xy
-pw = ((p - p.mean(axis=(1, 2), keepdims=True)) * w).mean(axis=(1, 2))
-print("Parseval  max|sum_k F_p - <p'w'>| / max|<p'w'>| = %.2e"
-          % (np.abs(res["F_p"].sum(1) - pw).max() / np.abs(pw).max()))
-# 2) P_h = -R (continuité exacte)
-print("P_h + R   max|.| / max|R|                       = %.2e"
-          % (np.abs(res["P_h"] + res["R"]).max() / np.abs(res["R"]).max()))
-# 3) fermeture P_h + P_v = T_p (erreur de discrétisation en dz^2), hors 2 niveaux de bord
-s = slice(2, -2)
-rel = np.sqrt((res["resid"][s] ** 2).mean() / (res["P_v"][s] ** 2).mean())
-print("resid     rms(P_h+P_v-T_p) / rms(P_v)           = %.2e" % rel)
+    res = pt.compute_pressure_terms(u,v,w,p, z_new, dx, dy, rho=rho_ref,
+                                  scale="log", nbins=100, nmin=5)
+    
+    # 1) Parseval : somme des coquilles = <p'w'>_xy
+    pw = ((p - p.mean(axis=(1, 2), keepdims=True)) * w).mean(axis=(1, 2))
+    print("Parseval  max|sum_k F_p - <p'w'>| / max|<p'w'>| = %.2e"
+              % (np.abs(res["F_p"].sum(1) - pw).max() / np.abs(pw).max()))
+    # 2) P_h = -R (continuité exacte)
+    print("P_h + R   max|.| / max|R|                       = %.2e"
+              % (np.abs(res["P_h"] + res["R"]).max() / np.abs(res["R"]).max()))
+    # 3) fermeture P_h + P_v = T_p (erreur de discrétisation en dz^2), hors 2 niveaux de bord
+    s = slice(2, -2)
+    rel = np.sqrt((res["resid"][s] ** 2).mean() / (res["P_v"][s] ** 2).mean())
+    print("resid     rms(P_h+P_v-T_p) / rms(P_v)           = %.2e" % rel)
+    
+    r   = pt.compute_pressure_terms(u, v, w, p, z_new, dx, dy, rho=rho_ref, scale="log", nmin=30)
+    adv = pt.compute_advective_transfer(u, v, w, z_new, dx, dy, edges=r["edges"])
+    B   = pt.cospectrum(w, b, dx, dy, edges=r["edges"])
+    r2  = pt.compute_pressure_terms_2d(u, v, w, p, z_new, dx, dy, rho=rho_ref, zmin=0, zmax=zi)
+    
+    pf.fig_pressure_check(r, adv, z_new, rho=rho_ref, zi=zi)                  # fig. 1
+    pf.fig_hv_budgets(r, adv, z_new, rho=rho_ref, zmax=zi, extra={"B": B})    # fig. 2
+    pf.fig_R_map(r, z_new, rho=rho_ref, zi=zi, overlay=adv["T_v"])            # fig. 3
+    pf.fig_R_kxky(r2) #, kmax_plot=...)  
  
 
 ################################################
@@ -612,12 +656,11 @@ for var in var_to_plot:
     if coarsegraining:
         ds3 = ds.copy()
     
-    if r['PI_k'] is not None:
-        ds["PI_k"]  = (("k",), r['PI_k'])
-        ds["PI_hh"] = (("k",), r['PI_hh'])
-        ds["PI_hv"] = (("k",), r['PI_hv'])
-        ds["PI_vh"] = (("k",), r['PI_vh'])
-        ds["PI_vv"] = (("k",), r['PI_vv'])
+    if r['Pi_hh_k'] is not None:
+        ds["PI_hh"] = (("k",), rout['Pi_hh_k'])
+        ds["PI_hv"] = (("k",), rout['Pi_hv_k'])
+        ds["PI_vh"] = (("k",), rout['Pi_vh_k'])
+        ds["PI_vv"] = (("k",), rout['Pi_vv_k'])
     
     ds["E_spec"]   = (("k",), rout['E_spec'])
     if rout['E_h_spec'] is not None:

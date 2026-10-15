@@ -48,7 +48,7 @@ def compute_spectral_transfer(winds,
                               dx=50.0, dy=50.0, dz=10.0,
                               z=None,
                               scalar=None,P=None,B=None,
-                              E_layer=None,
+                              E_layer=None,test_Hz=False,
                               windsb=None,windsc=None,
                               norm='ortho', dealiasing_23=False,
                               binning='log', k_bins=None,
@@ -77,6 +77,7 @@ def compute_spectral_transfer(winds,
         'mode_count' : number of modes per shell
     """
 
+    print('compute_spectral_transfer - step 1')
     # Retrieve winds
     if len(winds)==3 and winds[-1] is not None:
         U, V, W  = winds
@@ -166,21 +167,24 @@ def compute_spectral_transfer(winds,
             N_scalar_w = Wb * dscalar_dz
         
     # Calculate Energy spectra
-    field,N_field = U,N_u
-    fieldV        = (V,N_v)
+    fieldN  = (U,N_uu,N_uw)
+    fieldV  = (V,N_vu,N_vw)
     if W is not None:
-        fieldW        = (W,N_w)
+        fieldW        = (W,N_wu,N_ww)
     if scalar is not None:
-        field, N_field = scalar, N_scalar_u+N_scalar_w
+        fieldN =(scalar, N_scalar_u, N_scalar_w)
         fieldV, fieldW = None,None
          
+    print('compute_spectral_transfer - step 2 - Eout')
     Eout  =  compute_E_v2(k_bins,k_mag,
-                            field,N_field,
+                            fieldN,
+                            #N_field,
                             V=fieldV,W=fieldW,
                             P=P,k_z=kz)
     
     Eout_layer = None
     if Nz is not None and E_layer is not None:
+        print('compute_spectral_transfer - step 3 - Eout_layer')
         Eout_layer = compute_E_layer(k_bins, dx, dy,
                                      U, V, W,                       # (nz, ny, nx) physical fields
                                      N_u, N_v, N_w,                 # u·∇u components (physical, dealiased)
@@ -215,17 +219,18 @@ def compute_spectral_transfer(winds,
     if windsb is None and windsc is None and Nz is not None:
         time1 = time.time()
         if scalar is None:
-    
-            kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
-                                                 U, V, W, N_u, N_v, N_w, 
-                                                 dx=dx,dy=dy,dz=dz,
-                                                 kk=k_new, # To force the save k-axis
-#                                                 binning=binning, nbins=nbins,
-                                                 Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
-                                                 Nvh=(N_wu),Nvv=(N_ww),
-                                                 filter_type='spectral_3d')
+#             print('compute_spectral_transfer - step 4 - hh,hv')
+#             kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
+#                                                  U, V, W, N_u, N_v, N_w, 
+#                                                  dx=dx,dy=dy,dz=dz,
+#                                                  kk=k_new, # To force the save k-axis
+# #                                                 binning=binning, nbins=nbins,
+#                                                  Nhh=(N_uu,N_vu),Nhv=(N_uw,N_vw),
+#                                                  Nvh=(N_wu),Nvv=(N_ww),
+#                                                  filter_type='spectral_3d')
             
             # Test a different filter
+            print('compute_spectral_transfer - step 5 - different spectra')
             kk2, PI_hz,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
                                                  kk=kk1, # To force the save k-axis
                                                  w_bc='dst',
@@ -233,12 +238,13 @@ def compute_spectral_transfer(winds,
                                                  binning=binning, nbins=nbins,
                                                  filter_type='spectral_hz')
     
-        else:
-            kk1, PI_k ,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
-                                        U, V, W, N_u, N_v, N_w,
-                                        scalar=(scalar,N_scalar_u,N_scalar_w),
-                                        kk=k_new,
-                                        dx=dx,dy=dy,dz=dz)
+        # else:
+        #     print('compute_spectral_transfer - step 4 - hh,hv')
+        #     kk1, PI_k ,PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
+        #                                 U, V, W, N_u, N_v, N_w,
+        #                                 scalar=(scalar,N_scalar_u,N_scalar_w),
+        #                                 kk=k_new,
+        #                                 dx=dx,dy=dy,dz=dz)
         time2 = time.time()
         print('%s function took %0.3f ms' % ("Calculate PI_k2", (time2-time1)*1000.0))
         
@@ -253,6 +259,7 @@ def compute_spectral_transfer(winds,
     
     
     # Compute Parallel and perpendicular
+    print('compute_spectral_transfer - step 6 - para, perp')
     k_center_perp, E_perp, T_perp, Pi_perp, \
     k_center_para, E_para, T_para, Pi_para = [None for ij in range(8)]
     
@@ -462,7 +469,7 @@ def compute_E_layer(kh_bins, dx, dy,
         B_v_k=B_v_k,                    # NEW: buoyancy production of Ev
         closure=closure,
     )
-def compute_E_v2(k, k_mag, U, N_u,
+def compute_E_v2(k, k_mag, F, #N_F,
               V=None, W=None,
               dealias_mask=None,
               norm="ortho",
@@ -473,6 +480,7 @@ def compute_E_v2(k, k_mag, U, N_u,
 
     Parameters
     ----------
+    F        : (U,N_uu,N_uw)
     U, N_u   : u_x and u·∇u_x (or scalar field + its NL term if V is None)
     V, W     : tuples (field, NL_term) for v and w
     P        : pressure field (optional). If given, computes the
@@ -481,29 +489,44 @@ def compute_E_v2(k, k_mag, U, N_u,
     """
 
     # forward FFT of velocity (spectral space)
-    u_hat   = np.fft.fftn(U, norm=norm)
-    N_u_hat = np.fft.fftn(N_u, norm=norm)
+    F_hat    = np.fft.fftn(F[0], norm=norm)
+    N_F_hat  = np.fft.fftn(F[1]+F[2], norm=norm)
+    N_F_hat1 = np.fft.fftn(F[1], norm=norm)
+    N_F_hat2 = np.fft.fftn(F[2], norm=norm)
 
     if dealias_mask is None:
         dealias_mask = np.ones_like(k_mag, dtype=bool)
 
-    Ntot = U.size
+    Ntot = F[0].size
 
-    if V is not None:
-        v_hat,   N_v_hat = np.fft.fftn(V[0], norm=norm), np.fft.fftn(V[1], norm=norm)
-        w_hat,   N_w_hat = np.fft.fftn(W[0], norm=norm), np.fft.fftn(W[1], norm=norm)
+    if V is not None: # F is U - > calcul of TKE
+        v_hat, N_v_hat1, N_v_hat2 = [np.fft.fftn(V[ij], norm=norm) for ij in range(len(V))] #np.fft.fftn(V[0], norm=norm), np.fft.fftn(V[1], norm=norm)
+        w_hat, N_w_hat1, N_w_hat2 = [np.fft.fftn(W[ij], norm=norm) for ij in range(len(W))] #np.fft.fftn(W[0], norm=norm), np.fft.fftn(W[1], norm=norm)
+        N_v_hat = np.fft.fftn(V[1]+V[2], norm=norm) # Comme avant
+        N_w_hat = np.fft.fftn(W[1]+W[2], norm=norm)
 
         # --- spectral KE per mode, horizontal / vertical decomposition ---
-        E_h_3 = 0.5 * (np.abs(u_hat)**2 + np.abs(v_hat)**2)
+        E_h_3 = 0.5 * (np.abs(F_hat)**2 + np.abs(v_hat)**2)
         E_v_3 = 0.5 *  np.abs(w_hat)**2
         E_k3  = E_h_3 + E_v_3                     # exact: E = Eh + Ev
 
         # --- spectral transfer per mode, same decomposition ---
         # T = -Re( û* · N̂ ), component-wise
-        T_h_3 = -(np.real(np.conj(u_hat) * N_u_hat) +
+        T_h_3 = -(np.real(np.conj(F_hat) * N_F_hat) +
                   np.real(np.conj(v_hat) * N_v_hat))
         T_v_3 = -np.real(np.conj(w_hat) * N_w_hat)
         T_k3  = T_h_3 + T_v_3                     # exact: T = Th + Tv
+        
+        # Decomposition in hh,hv,vh,vv
+        # Nhh=(N_uu,N_vu)
+        T_hh_3 = -(np.real(np.conj(F_hat) * N_F_hat1) +
+                   np.real(np.conj(v_hat) * N_v_hat1))
+        T_hv_3 = -(np.real(np.conj(F_hat) * N_F_hat2) +
+                   np.real(np.conj(v_hat) * N_v_hat2))
+        T_vh_3 = -np.real(np.conj(w_hat) * N_w_hat1)
+        T_vv_3 = -np.real(np.conj(w_hat) * N_w_hat2)
+
+        
 
         # --- optional pressure-deformation exchange (couples Eh <-> Ev) ---
         # phi = Re( p̂* i kz ŵ )  : gains for E_v, losses for E_h (phi_v = -phi_h)
@@ -519,9 +542,12 @@ def compute_E_v2(k, k_mag, U, N_u,
             
     else:
         # scalar variance branch (unchanged)
-        E_k3  = np.abs(u_hat)**2
-        T_k3  = -np.real(np.conj(u_hat) * N_u_hat)
+        E_k3  = np.abs(F_hat)**2
+        T_k3  = -np.real(np.conj(F_hat) * N_F_hat)
+        T_hh_3 = -(np.real(np.conj(F_hat) * N_F_hat1))
+        T_hv_3 = -(np.real(np.conj(F_hat) * N_F_hat2))
         E_h_3 = E_v_3 = T_h_3 = T_v_3 = phi_v_3 = None
+        T_vh_3 = T_vv_3 = None
 
     # volume normalization
     scale = 1.0 / Ntot
@@ -530,13 +556,19 @@ def compute_E_v2(k, k_mag, U, N_u,
     E_k3, T_k3   = _s(E_k3), _s(T_k3)
     E_h_3, E_v_3 = _s(E_h_3), _s(E_v_3)
     T_h_3, T_v_3 = _s(T_h_3), _s(T_v_3)
+    T_hh_3, T_hv_3 = _s(T_hh_3), _s(T_hv_3)
+    T_vh_3, T_vv_3 = _s(T_vh_3), _s(T_vv_3)
+
     phi_v_3      = _s(phi_v_3)
+
 
     # mask dealiased modes consistently everywhere
     E_k3[~dealias_mask] = 0.0
     T_k3[~dealias_mask] = 0.0
     if E_h_3 is not None:
         for a in (E_h_3, E_v_3, T_h_3, T_v_3):
+            a[~dealias_mask] = 0.0
+        for a in (T_hh_3, T_hv_3,T_vh_3, T_vv_3):
             a[~dealias_mask] = 0.0
         if phi_v_3 is not None:
             phi_v_3[~dealias_mask] = 0.0
@@ -560,6 +592,9 @@ def compute_E_v2(k, k_mag, U, N_u,
     T_k        = binned(T_k3)
     E_h_k, E_v_k = binned(E_h_3), binned(E_v_3)
     T_h_k, T_v_k = binned(T_h_3), binned(T_v_3)
+    T_hh_k, T_hv_k = binned(T_hh_3), binned(T_hv_3)
+    T_vh_k, T_vv_k = binned(T_vh_3), binned(T_vv_3)
+
     phi_v_k      = binned(phi_v_3)
     k_sum        = np.bincount(iv, weights=k_mag_flat[valid], minlength=n_shells)
 
@@ -567,6 +602,12 @@ def compute_E_v2(k, k_mag, U, N_u,
     Pi_k   = -np.cumsum(T_k)
     Pi_h_k = -np.cumsum(T_h_k) if T_h_k is not None else None
     Pi_v_k = -np.cumsum(T_v_k) if T_v_k is not None else None
+
+    Pi_hh_k = -np.cumsum(T_hh_k) if T_hh_k is not None else None
+    Pi_hv_k = -np.cumsum(T_hv_k) if T_hv_k is not None else None
+    Pi_vh_k = -np.cumsum(T_vh_k) if T_vh_k is not None else None
+    Pi_vv_k = -np.cumsum(T_vv_k) if T_vv_k is not None else None
+
 
     # ---------------- shell geometry (unchanged) ----------------
     k_mean = np.where(mode_count > 0, k_sum / np.maximum(mode_count, 1), np.nan)
@@ -585,6 +626,8 @@ def compute_E_v2(k, k_mag, U, N_u,
         # horizontal / vertical decomposition (Eh + Ev = E, Ph + Pv = P exactly)
         E_h_k=E_h_k, E_v_k=E_v_k, E_h_spec=E_h_spec, E_v_spec=E_v_spec,
         T_h_k=T_h_k, T_v_k=T_v_k, Pi_h_k=Pi_h_k, Pi_v_k=Pi_v_k,
+        Pi_hh_k=Pi_hh_k,Pi_hv_k=Pi_hv_k,
+        Pi_vh_k=Pi_vh_k,Pi_vv_k=Pi_vv_k,
         # pressure-deformation exchange (optional): +phi for Ev, -phi for Eh
         phi_v_k=phi_v_k,
         E_k3=E_k3, T_k3=T_k3,
