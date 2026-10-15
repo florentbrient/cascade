@@ -856,7 +856,7 @@ def plot_time(time,Gamma,
               namefig='test',title=None, namecaption=None,
               ylim=None,colors=None,
               marker=None,lines='-',
-              xsize=(14,10),fts=18,lw=2.5):
+              xsize=(14,8),fts=18,lw=2.5):
     
     # Start plot
     fig, ax = plt.subplots(1,1,figsize=xsize)

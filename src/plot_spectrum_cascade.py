@@ -75,7 +75,7 @@ tl.mkdir(pathout)
 
 # Variables
 varall  = ['TKE','TKEh','TKEv','THLM','RNPM','RCT','PABST','buoyancy']
-varall  = ['TKE','TKEh','TKEv','THLM','RNPM','buoyancy'] #,'RCT','PABST','buoyancy']
+varall  = ['TKE','TKEh','TKEv','THLM','RNPM'] #,'RCT','PABST','buoyancy']
 data    = {}
 for var in varall:
     filein    = filein0.replace('XXX',var)
@@ -518,15 +518,18 @@ dayhere  = make_moy(day_hours,nb=nb)
 namefig=pathout+'PiNeg_'+prefix
 PinegAll = {}
 PinegAll['TKE']  = np.array([data['TKE'][ij]['Pineg'].values for ij in range(nt)])
-PinegAll['THLM'] = {}
+PinegAll['TKEhz'] = {}
 for ij in range(nt):
-    tmp = data['THLM'][ij]['PI_k']
-    PinegAll['THLM'][ij],_ = stl.integrate_negative_cascade(kv, tmp, kPBLall[ij], 
+    tmp = data['TKE'][ij]['PI_hz']
+    PinegAll['TKEhz'][ij],_ = stl.integrate_negative_cascade(kv, tmp, kPBLall[ij], 
                                                         method="trapz")
 
 for var in PinegAll.keys():
     PinegAll[var] = make_moy(PinegAll[var],nb=nb)
-    PinegAll[var] /= np.min(PinegAll[var])
+    
+minTKE = np.min(PinegAll['TKE'])
+for var in PinegAll.keys():
+    PinegAll[var] /= minTKE
 
 maxh = np.max(PinegAll['TKE'])
 ylim = None #[0,math.ceil(maxh / 5) * 5]
