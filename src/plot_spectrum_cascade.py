@@ -172,7 +172,7 @@ colsep   = ['b','c','m','m','c']
 linsep   = ['-','--','--',':',':']
 
 # Plotall
-plotall = True
+plotall = False
 
 
 for idxt,tc in enumerate(time_hours3D):
