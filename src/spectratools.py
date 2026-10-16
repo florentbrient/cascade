@@ -234,6 +234,7 @@ def compute_spectral_transfer(winds,
             kk2, PI_hz,  *_ = compute_Pi_from_uBF(U, V, W, N_u, N_v, N_w,  
                                                  kk=k_new, # To force the save k-axis
                                                  w_bc='dst',
+ #                                                w_bc='dct',
                                                  dx=dx,dy=dy,dz=dz,
                                                  binning=binning, nbins=nbins,
                                                  filter_type='spectral_hz')
