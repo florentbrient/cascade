@@ -1,0 +1,245 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=1170299 Running_Node=r3i2n33
+Node=1 Task=1
+------------------------------------------------------------------
+FIRZ4
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/tools.py:813: RuntimeWarning: divide by zero encountered in divide
+  func=(lambda x: 1 / x)
+True
+36 ['/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_004_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_001_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_002_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_003_TKE.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_004_TKE.nc']
+36 ['/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_004_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_001_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_002_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_003_TKEh.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_004_TKEh.nc']
+36 ['/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_004_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_001_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_002_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_003_TKEv.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_004_TKEv.nc']
+36 ['/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_004_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_001_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_002_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_003_THLM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_004_THLM.nc']
+36 ['/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0001_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0002_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0003_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0004_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0005_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0006_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0007_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0008_004_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_001_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_002_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_003_RNPM.nc', '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/data/Cascade_FIZ4c_V0009_004_RNPM.nc']
+files  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/*/FIZ4c/*.1.*.000*.nc ['/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0001.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0002.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0003.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0004.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0005.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0006.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0007.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0008.000.nc', '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0009.000.nc']
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0001.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0002.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0003.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0004.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0005.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0006.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0007.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0008.000.nc
+file :  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/FIRE3D/FIZ4c/FIZ4c.1.V0009.000.nc
+[False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True]
+0 1.0
+k,kPBL:  0 (70,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (70,) (1, 1)
+k,kPBL:  1 (70,) (1, 1)
+k,kPBL:  2 (70,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (100,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (32,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (100,) (1, 1)
+k,kPBL:  2 (32,) (1, 1)
+labels  ['', 'perp', 'para']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+k,kPBL:  3 (101,) (1, 1)
+k,kPBL:  4 (101,) (1, 1)
+labels  ['Total', 'hh', 'hv', 'vh', 'vv']
+k,kPBL:  0 (70,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (70,) (1, 1)
+k,kPBL:  1 (70,) (1, 1)
+k,kPBL:  2 (70,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (100,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (32,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (100,) (1, 1)
+k,kPBL:  2 (32,) (1, 1)
+labels  ['', 'perp', 'para']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+k,kPBL:  3 (101,) (1, 1)
+k,kPBL:  4 (101,) (1, 1)
+labels  ['Total', 'hh', 'hv', 'vh', 'vv']
+k,kPBL:  0 (70,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (70,) (1, 1)
+k,kPBL:  1 (70,) (1, 1)
+k,kPBL:  2 (70,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (100,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (32,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (100,) (1, 1)
+k,kPBL:  2 (32,) (1, 1)
+labels  ['', 'perp', 'para']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+k,kPBL:  3 (101,) (1, 1)
+k,kPBL:  4 (101,) (1, 1)
+labels  ['Total', 'hh', 'hv', 'vh', 'vv']
+k,kPBL:  0 (70,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (70,) (1, 1)
+k,kPBL:  1 (70,) (1, 1)
+k,kPBL:  2 (70,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (101,) (1, 1)
+k,kPBL:  2 (101,) (1, 1)
+labels  ['0.1', '0.5', '0.9']
+k,kPBL:  0 (101,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (100,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (32,) (1,)
+labels  ['t+2']
+k,kPBL:  0 (101,) (1, 1)
+k,kPBL:  1 (100,) (1, 1)
+k,kPBL:  2 (32,) (1, 1)
+labels  ['', 'perp', 'para']
+Traceback (most recent call last):
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 1512, in _construct_dataarray
+    variable = self._variables[name]
+               ~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'PI_vh'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 1611, in __getitem__
+    return self._construct_dataarray(key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 1514, in _construct_dataarray
+    _, name, variable = _get_virtual_variable(self._variables, name, self.sizes)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 221, in _get_virtual_variable
+    raise KeyError(key)
+KeyError: 'PI_vh'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src//plot_spectrum_cascade.py", line 375, in <module>
+    Pitmp  = data[var][idxt][ch]
+             ~~~~~~~~~~~~~~~^^^^
+  File "/linkhome/rech/genlmd01/rces071/.local/lib/python3.12/site-packages/xarray/core/dataset.py", line 1624, in __getitem__
+    raise KeyError(message) from e
+KeyError: "No variable named 'PI_vh'. Did you mean one of ('PI_hv', 'PI_hh')?"
+
+real	0m51.976s
+user	0m35.191s
+sys	0m4.285s

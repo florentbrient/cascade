@@ -1,0 +1,1259 @@
+------------------------------------------------------------------
+Job submit on jean-zay1 by rces071
+JobID=1166245 Running_Node=r3i2n33
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0001.OUT.004.nc
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:166: RuntimeWarning: invalid value encountered in scalar divide
+  kmean = np.sum(kv * Pv) / np.sum(Pv)
+/lustre/fswork/projects/rech/whl/rces071/Github/cascade/src/spectrum2d.py:169: RuntimeWarning: invalid value encountered in divide
+  C = np.cumsum(Pv) / np.sum(Pv)
+*****
+Start analysis of  /lustre/fsn1/projects/rech/whl/rces071/mon_calcul//V5-7-0/FIRE3D/FIRZ4/FIRZ4.1.V0001.OUT.004.nc
+*****
+[39600.]
+Error in opening  LWP
+PBL Height:  587.5
+Print 3D wind cascade
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 5 - different spectra
+Calculate PI_k2 function took 162433.066 ms
+compute_spectral_transfer - step 6 - para, perp
+THLM_new
+Print 3D cascade of THLM_new
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+Calculate PI_k2 function took 0.001 ms
+compute_spectral_transfer - step 6 - para, perp
+RNPM_new
+Print 3D cascade of RNPM_new
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+Calculate PI_k2 function took 0.001 ms
+compute_spectral_transfer - step 6 - para, perp
+RCT_new
+Print 3D cascade of RCT_new
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+Calculate PI_k2 function took 0.001 ms
+compute_spectral_transfer - step 6 - para, perp
+PABST_new
+Print 3D cascade of PABST_new
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+Calculate PI_k2 function took 0.001 ms
+compute_spectral_transfer - step 6 - para, perp
+buoyancy_new
+Print 3D cascade of buoyancy_new
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+Calculate PI_k2 function took 0.001 ms
+compute_spectral_transfer - step 6 - para, perp
+variance Spectra  0.484754679958118
+variance Field  0.48412350045933167
+The spectra represent 100.13037571987054% of the mean of the field
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+variance Spectra  0.00013536147139543738
+variance Field  0.000131740546219142
+The spectra represent 102.74852752642471% of the var of the field
+variance Spectra  0.0001318850885478002
+variance Field  0.000131740546219142
+The spectra represent 100.10971742019179% of the var of the field
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+variance Spectra  0.12353821980897177
+variance Field  0.11866848633644218
+The spectra represent 104.10364505596135% of the mean of the field
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+compute_spectral_transfer - step 1
+compute_spectral_transfer - step 2 - Eout
+compute_spectral_transfer - step 6 - para, perp
+
+real	4m22.641s
+user	3m28.058s
+sys	0m48.393s

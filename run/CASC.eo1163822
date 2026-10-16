@@ -1,0 +1,7 @@
+------------------------------------------------------------------
+Job submit on jean-zay2 by rces071
+JobID=1163822 Running_Node=r1i2n32
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0002.OUT.008.nc
+[2026-10-16T10:38:46.034] error: *** JOB 1163822 ON r1i2n32 CANCELLED AT 2026-10-16T10:38:46 DUE to SIGNAL Terminated ***

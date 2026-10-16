@@ -53,7 +53,8 @@ print(ON_JZ)
 #stop
 if ON_JZ:
     pathsrc= '/lustre/fswork/projects/rech/whl/rces071/Github/cascade/' 
-    path1D = '/lustre/fsstor/projects/rech/whl/rces071/MNH-V5-7-0/'
+    #path1D = '/lustre/fsstor/projects/rech/whl/rces071/MNH-V5-7-0/'
+    path1D = '/lustre/fsn1/projects/rech/whl/rces071/mon_calcul/V5-7-0/'
 else:
     pathsrc= '/home/fbrient/GitHub/cascade/'
     path1D = '/home/fbrient/MNH/V5-7-0/'
@@ -61,7 +62,7 @@ else:
 
 # Open all netcdf file
 #prefix = sys.argv[1] # name of the prefix (FIRZ4)
-prefix = 'FIRZ4' 
+prefix = 'FIZ4c' 
 
 
 pathin   = pathsrc+"data/"
@@ -86,7 +87,7 @@ path1D+='*/'+prefix+'/'
 file0 = path1D+'*'+'.1.'+'*'+'.000'+'*'+'.nc'
 # List of files with glob
 files = sorted(glob.glob(file0))
-print('files ',files)
+print('files ',file0,files)
 timing2 = []
 datarad = []
 for idx,file in enumerate(files):
@@ -165,13 +166,13 @@ kmaxLWP = np.zeros(nt)
 kPBLall = np.zeros(nt)
 
 # Colors separation Pi_hh, Pi_hv...
-cassep   = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
+cassep   = ['Pi','PI_hh','PI_hv','PI_vh','PI_vv']
 labsep   = ['Total','hh','hv','vh','vv']
 colsep   = ['b','c','m','m','c']
 linsep   = ['-','--','--',':',':']
 
 # Plotall
-plotall = False
+plotall = True
 
 
 for idxt,tc in enumerate(time_hours3D):
@@ -371,9 +372,10 @@ for idxt,tc in enumerate(time_hours3D):
             
             Pi3D = []
             for ij,ch in enumerate(cassep):
-                Pitmp  = data[var][idxt][ch]
-    #            idxtmp = ~np.isnan(Pitmp)
-                Pi3D  += [Pitmp] #[idxtmp]]
+                if ch in data[var][idxt].keys():
+                    Pitmp  = data[var][idxt][ch]
+    #               idxtmp = ~np.isnan(Pitmp)
+                    Pi3D  += [Pitmp] #[idxtmp]]
             #kbins = np.array(data['kbins'])
             
                 

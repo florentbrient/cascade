@@ -45,7 +45,7 @@ def makernpm(data,RCT=None):
 # Test on local file (by default: False)
 testlocal= False
 # Run Filtered cascade (by default: True)
-Filter3D = False
+Filter3D = True
 coarsegraining = False
 
 minimum= False
@@ -292,12 +292,12 @@ if Filter3D:
         # Save important variables
         Ek_BT[:,ij],Tk_BT[:,ij],Pi_BT[:,ij] = [resultplus1[stcut]['Eout'][ijk] for ijk in ['E_k','T_k','Pi_k']]
         PIhh_BT[:,ij],PIhv_BT[:,ij],PIvh_BT[:,ij],PIvv_BT[:,ij] = \
-            [resultplus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
+            [resultplus1[stcut]['Eout'][ijk] for ijk in ['Pi_hh_k','Pi_hv_k','Pi_vh_k','Pi_vv_k']]
             
         
         Ek_TB[:,ij],Tk_TB[:,ij],Pi_TB[:,ij] = [resultminus1[stcut]['Eout'][ijk] for ijk in ['E_k','T_k','Pi_k']]
         PIhh_TB[:,ij],PIhv_TB[:,ij],PIvh_TB[:,ij],PIvv_TB[:,ij] = \
-            [resultminus1[stcut][ijk] for ijk in ['PI_hh','PI_hv','PI_vh','PI_vv']]
+            [resultminus1[stcut]['Eout'][ijk] for ijk in ['Pi_hh_k','Pi_hv_k','Pi_vh_k','Pi_vv_k']]
 
 
         
@@ -656,9 +656,10 @@ for var in var_to_plot:
     if coarsegraining:
         ds3 = ds.copy()
     
-    if r['Pi_hh_k'] is not None:
+    if rout['Pi_hh_k'] is not None:
         ds["PI_hh"] = (("k",), rout['Pi_hh_k'])
         ds["PI_hv"] = (("k",), rout['Pi_hv_k'])
+    if rout['Pi_vh_k'] is not None:
         ds["PI_vh"] = (("k",), rout['Pi_vh_k'])
         ds["PI_vv"] = (("k",), rout['Pi_vv_k'])
     

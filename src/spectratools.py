@@ -218,7 +218,7 @@ def compute_spectral_transfer(winds,
     
     if windsb is None and windsc is None and Nz is not None:
         time1 = time.time()
-        if scalar is None:
+        if scalar is None and test_Hz:
 #             print('compute_spectral_transfer - step 4 - hh,hv')
 #             kk1, PI_k, PI_hh, PI_hv, PI_vh, PI_vv = compute_Pi_from_uBF(
 #                                                  U, V, W, N_u, N_v, N_w, 

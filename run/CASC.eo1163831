@@ -1,0 +1,7 @@
+------------------------------------------------------------------
+Job submit on jean-zay2 by rces071
+JobID=1163831 Running_Node=r1i1n6
+Node=1 Task=10
+------------------------------------------------------------------
+FIRZ4.1.V0002.OUT.017.nc
+[2026-10-16T10:38:46.040] error: *** JOB 1163831 ON r1i1n6 CANCELLED AT 2026-10-16T10:38:46 DUE to SIGNAL Terminated ***
