@@ -45,8 +45,8 @@ def makernpm(data,RCT=None):
 # Test on local file (by default: False)
 testlocal= False
 # Run Filtered cascade (by default: True)
-Filter3D = True
-coarsegraining = False
+Filter3D = False
+coarsegraining = True
 
 minimum= False
 if Filter3D or coarsegraining:
@@ -238,12 +238,14 @@ tl.checkvariance(kc,E_k3_mean,TKE3D,type='mean')
 cascadeneg,_ = stl.integrate_negative_cascade(kc, result['Eout']['Pi_k'], kPBL, method="trapz")
     
 # For 3D filtering
-idxzlist = None
-if Filter3D:
-    idxzlist   = np.arange(0.1,1.0,0.1) #np.arange(0,1.2,0.1)
-    idxzfilter = [tl.near(z_new, ij*PBLheight) for ij in idxzlist]
-    zfilter    = z_new[idxzfilter]
+#iidxzlist = None
 
+#if Filter3D:
+idxzlist   = np.arange(0.1,1.0,0.1) #np.arange(0,1.2,0.1)
+idxzfilter = [tl.near(z_new, ij*PBLheight) for ij in idxzlist]
+zfilter    = z_new[idxzfilter]
+
+if Filter3D:
     Nk,Nzz = len(k),len(idxzlist)
     Ek_BT,Tk_BT,Pi_BT = [np.zeros((Nk,Nzz))*np.nan for ij in range(3)]
     Ek_TB,Tk_TB,Pi_TB = [np.zeros((Nk,Nzz))*np.nan for ij in range(3)]
@@ -396,7 +398,7 @@ if coarsegraining:
 ################################################
 #    Calculate 2D spectra flux and cascade     #
 ################################################
-
+print('Start 2D')
 # Calculate LWP spectra
 # First 
 winds2D =  (np.mean(UT_new,axis=0), np.mean(VT_new,axis=0))
@@ -703,7 +705,7 @@ for var in var_to_plot:
     
         
     if Filter3D:
-        ds2 = ds.copy()
+#        ds2 = ds.copy()
         ds2["EkBT"] = (("k", "zlist"), Ek_BT)
         ds2["TkBT"] = (("k", "zlist"), Tk_BT)
         ds2["PiBT"] = (("k", "zlist"), Pi_BT)
@@ -720,6 +722,7 @@ for var in var_to_plot:
         ds2["PIvvTB"] = (("k", "zlist"), PIvv_TB)
         ds2["PinegBT"] = (("zlist",),PinegBT)
         ds2["PinegTB"] = (("zlist",),PinegTB)
+        print('nc2: ',file_netcdf2)
         ds2.to_netcdf(file_netcdf2)
         del ds2
     
