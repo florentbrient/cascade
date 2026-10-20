@@ -62,7 +62,7 @@ else:
 
 # Open all netcdf file
 #prefix = sys.argv[1] # name of the prefix (FIRZ4)
-prefix = 'FIZ4c' 
+prefix = 'FIRZ4' 
 
 
 pathin   = pathsrc+"data/"
@@ -78,9 +78,12 @@ tl.mkdir(pathout)
 varall  = ['TKE','TKEh','TKEv','THLM','RNPM','RCT','PABST','buoyancy']
 varall  = ['TKE','TKEh','TKEv','THLM','RNPM'] #,'RCT','PABST','buoyancy']
 data    = {}
+dataTBBT= {}
 for var in varall:
     filein    = filein0.replace('XXX',var)
     data[var] = tl.read_netcdfs(filein, dim='time',concat=False)
+    filein2   = filein.replace('Cascade','Cascade_BT')
+    dataTBBT[var] = tl.read_netcdfs(filein2, dim='time',concat=False)
     
 ############ Open 1D to find time of sunlight
 path1D+='*/'+prefix+'/'
@@ -173,6 +176,7 @@ linsep   = ['-','--','--',':',':']
 
 # Plotall
 plotall = False
+plotTBBT = False
 
 
 for idxt,tc in enumerate(time_hours3D):
@@ -342,6 +346,14 @@ for idxt,tc in enumerate(time_hours3D):
                 tmp   = np.insert(np.diff(khere), 0, np.nan)
                 Ehere = Ehere/tmp
                 
+                # remove minimal count
+                mincount = 4
+                count = data[var][idxt]['mode_count'].values
+                idxcount = count<mincount
+                print(ij,ch,idxcount)
+                khere[idxcount] = np.nan
+                Ehere[0,idxcount] = np.nan
+                
                 tl.plot_flux(khere,Ehere,PI=Pihere,
                       kPBL=kPBL,#kin=kin[idxt],
                       kcell=kmaxLWP[idxt],
@@ -388,18 +400,81 @@ for idxt,tc in enumerate(time_hours3D):
                   labels=labsep,normalized=True,
                   colors=colsep,linestyles=linsep,
                   plotlines=plotlines,namefig=namefig)
-        
+            
+        if plotTBBT and var=='TKE':
+            
+            cassepTB = ['Pi','PIhh','PIhv','PIvh','PIvv']
+            for icc,icvalue in enumerate(cassepTB):
+                
+                namefig3=pathout+icvalue+'_{CASCTB}_'+var+'_'+prefix+'_'+tst
+                
+                z2 = [z[tl.near(z,ij*PBL)] for ij in dataTBBT[var][idxt]['zlist'].values]
+                z2.insert(0,0)
+                z2.append(PBL.item())
+                PiTB = dataTBBT[var][idxt][icvalue+'TB'].values  # shape (Nk, Nz)
+                PiBT = dataTBBT[var][idxt][icvalue+'BT'].values
+                Pi   = data[var][idxt][cassep[icc]]
+                # Add boundaries (PiBT[-1] -> max)
+                PiTB = np.insert(PiTB, 0, Pi, axis=1) # debut
+                PiTB = np.hstack((PiTB, np.zeros((len(kv),1))))
+                # Add boundaries (PiBT[0] -> max)
+                PiBT = np.insert(PiBT, 0, np.zeros(len(kv)) , axis=1) # debut
+                PiBT = np.hstack((PiBT, Pi.values[:, None] ))            
+                
+                
+            
+                #dTB_dk = np.gradient(Pi2TB, np.log(kbins), axis=0)
+                #dBT_dk = np.gradient(Pi2BT, np.log(kbins), axis=0)
+                #dTB_dz = np.gradient(Pi2TB, z_new2, axis=1)
+                #dBT_dz = np.gradient(Pi2BT, z_new2, axis=1)
+                
+                #Fk = 0.5 * (dBT_dk + dTB_dk)
+                #Fz = 0.5 * (dBT_dz - dTB_dz)
+                
+                #print("Fk :", np.nanmin(Fk), np.nanmax(Fk))
+                #print("Fz :", np.nanmin(Fz), np.nanmax(Fz))
+                #print("ratio :", np.nanmax(np.abs(Fk))/np.nanmax(np.abs(Fz)))
+                
+    
+                #quiver = [Fk.T, Fz.T]
+                
+                #Kc, Zc = np.meshgrid(kcenter/kPBL, z_new2)
+                Kc, Zc = np.meshgrid(kv/kPBL, z2)
+                Kc, Zc = Kc.T, Zc.T
+                
+                
+                plt.contourf(Kc.T, Zc.T,PiTB.T+PiBT.T);plt.colorbar();
+                plt.contour(Kc.T, Zc.T,PiTB.T+PiBT.T,levels=0,colors='white');plt.xscale('log')
+                plt.show()
+                
+                # Plot Cascade from Bottom-top and Top-down integral
+                tmpall = [PiTB,PiBT,PiTB+PiBT]
+                levelCasc = [-0.0001,0.0001,31]
+                labelCasc = r'$\mathbf{\Pi \;}$'
+                #namefig3a=namefig3.format(hour=hour)
+                
+                for icas,cas in enumerate(['TB','BT','TBBT']):
+                    namefig=namefig3.format(CASCTB=cas)
+                    tmp = tmpall[icas]
+                    tl.plot_spectraTKE2D(tmp,Kc,Zc,
+                                          index=labelCasc,
+                                          levels0=levelCasc,
+                                          normalized=True,
+                                          RCT=tmp,contourRCT=0,
+                                          xline=1,yline=PBL,
+                                          xline2=kmaxLWP[idxt]/kPBL,
+                                          namefig=namefig)
 # Plot all LWP spectra
 
-nb = 3
-timeint = np.arange(0,nt,nb)
-timehere = make_moy(time_hours3D,nb=nb)
-
+nb = 2
+ntmax = min(48,nt) #hours
+timehere = make_moy(time_hours3D[:ntmax],nb=nb)
+timehere = np.round(timehere)
 
 namefig=pathout+'ELWP_'+prefix
-ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(nt)]
+ELWPall = [data['TKE'][ij]['ELWP'].values for ij in range(ntmax)]
 ELWPall  = make_moy(ELWPall,nb=nb)
-kPBLall2 = make_moy(kPBLall,nb=nb)
+kPBLall2 = make_moy(kPBLall[:ntmax],nb=nb)
 
 tl.plot_flux(kLWP,ELWPall,
       kPBL=kPBLall2,
@@ -409,7 +484,7 @@ tl.plot_flux(kLWP,ELWPall,
       plotlines=2,namefig=namefig)
 
 namefig=pathout+'ELWP2_'+prefix
-ELWPall = [data['TKE'][ij]['ELWP2'].values for ij in range(nt)]
+ELWPall = [data['TKE'][ij]['ELWP2'].values for ij in range(ntmax)]
 ELWPall = make_moy(ELWPall,nb=nb)
 
 kLWP2   = data['TKE'][0]['kLWP2'].values
@@ -419,10 +494,12 @@ tl.plot_flux(kLWP2,ELWPall,
       y1lab=y1lab,
       normalized=True,
       labels=timehere,
+      showobs=True,
       plotlines=2,namefig=namefig)
 
 # colors, lines, markers
 nb = 2
+timeint = np.arange(0,nt,nb)
 timehere = make_moy(time_hours3D,nb=nb)
 
 clm = {}
@@ -484,7 +561,7 @@ for cell in ["Cell_Size","Aspect_Ratio"]:
 # Compute cascade
 #casall = ['PI_k','PI_hh','PI_hv','PI_vh','PI_vv']
 
-nb = 2
+nb = 1
 maxPi=10
 
 namefig=pathout+'PiNeg_sep_'+prefix
@@ -514,7 +591,7 @@ tl.plot_time(timehere,CnegAll,
              namefig=namefig)
 
 
-nb = 2
+nb = 1
 timehere = make_moy(time_hours3D,nb=nb)
 dayhere  = make_moy(day_hours,nb=nb)
 namefig=pathout+'PiNeg_'+prefix

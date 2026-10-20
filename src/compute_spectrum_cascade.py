@@ -43,7 +43,7 @@ def makernpm(data,RCT=None):
 
 
 # Test on local file (by default: False)
-testlocal= False
+testlocal= True
 # Run Filtered cascade (by default: True)
 Filter3D = False
 coarsegraining = True
@@ -319,7 +319,7 @@ if Filter3D:
 #    Calculate coarse graining                 #
 ################################################
 if coarsegraining:
-    k_cuts = k
+    k_cuts = k[::2]
     Pi_z_k = cgf.compute_coarse_grained_flux_profile(
                     UT_new, VT_new, WT_new,    
                     dx, dy, z_new, k_cuts,
@@ -345,7 +345,9 @@ if coarsegraining:
     H = PBLheight      # boundary-layer depth (or a relevant plume vertical scale)
     
     if zfilter.any():
-        ell_z_list = zfilter
+        ell_z_list = np.array(zfilter, dtype=object)
+        ell_z_list=np.insert(ell_z_list,0,None)
+        ell_z_list=np.append(ell_z_list,H)
     else:
         ell_z_list = [None, 0.05*H, 0.2*H, 0.5*H, H, 1.5*H]
     
@@ -354,10 +356,10 @@ if coarsegraining:
     #    k_cuts, ell_z_list=[None, 0.05*H, 0.2*H, 0.5*H, H],
     #    filter_type='gaussian', flux_type='sfs')
     
-    sweep_sharp = cgf.compute_coarse_grained_flux_ellz_sweep(
-        UT_new, VT_new, WT_new, dx, dy, z_new,
-        k_cuts, ell_z_list=ell_z_list,
-        filter_type='sharp', flux_type='sfs')
+#    sweep_sharp = cgf.compute_coarse_grained_flux_ellz_sweep(
+#        UT_new, VT_new, WT_new, dx, dy, z_new,
+#        k_cuts, ell_z_list=ell_z_list,
+#        filter_type='sharp', flux_type='sfs')
     
     
     # colors=['r','b','y','m','k','orange']
@@ -372,24 +374,33 @@ if coarsegraining:
         
             
     # 2D maps?
-    ell_h_list = 2 * np.pi / np.array(k_cuts[::3])
+    ell_h_list = 2 * np.pi / np.array(k_cuts) #[::3])
     # Calculer la carte Pi(ell_h, ell_z)
     Pi_map = compute_Pi_2D_map(UT_new, VT_new, WT_new, dx, dy, z_new, 
                                ell_h_list, ell_z_list, 
                                filter_type='sharp', flux_type='sfs')
     
-    # # Visualisation
+    # # # Visualisation
+    # idxz = 5
+    # ell_z_list_plot = ell_z_list.copy()
+    # ell_z_list_plot[0] = 10
     # plt.figure(figsize=(10, 8))
     # plt.contourf(
-    #     ell_z_list/PBLheight, ell_h_list/PBLheight, Pi_map[:,:,1],
+    #     ell_z_list_plot/PBLheight, ell_h_list/PBLheight, Pi_map[:,:,idxz],
     #     levels=20, cmap='RdBu'
     # #, norm=plt.Normalize(vmin=-1e-4, vmax=1e-4)
     # )
+
     # plt.colorbar(label='Flux $\Pi(\ell_h, \ell_z)$ [m²/s³]')
+    # plt.contour(
+    #     ell_z_list_plot/PBLheight, ell_h_list/PBLheight, Pi_map[:,:,idxz],
+    #     levels=[0]
+    # #, norm=plt.Normalize(vmin=-1e-4, vmax=1e-4)
+    # )
     # plt.xscale('log')
     # plt.yscale('log')
-    # plt.xlabel('Échelle verticale $\ell_z$ [m]')
-    # plt.ylabel('Échelle horizontale $\ell_h$ [m]')
+    # plt.xlabel('Échelle verticale $\ell_z$ [-]')
+    # plt.ylabel('Échelle horizontale $\ell_h$ [-]')
     # plt.title('Carte 2D du flux $\Pi(\ell_z, \ell_h)$')
     # plt.grid(True, which='both', linestyle='--')
     # plt.show()

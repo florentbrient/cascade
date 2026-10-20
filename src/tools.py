@@ -845,7 +845,7 @@ def plot_flux(k,E,PI=None,
         # If normalized, Axis is k/kH -> Pour z/H = 40 --> k/kH = 1/40
         if normalized and showobs:
             k30 = 1./25.
-            k40 = 1./40.
+            k40 = 1./35.
             ax1.axvspan(k40, k30, color="grey", alpha=0.3)  # Adjust alpha for transparency
     
       
@@ -978,6 +978,89 @@ def plot_time(time,Gamma,
     ax.tick_params(axis='both', labelsize=fts)
     adjust_spines(ax,['left', 'bottom'])
         
+    # Save figure
+    namefig+='.png'
+    savefig(fig, namefig)
+    plt.close('all')
+    
+    return None
+
+
+def plot_spectraTKE2D(datatmp,k1d_grid,z_grid,
+                      index='INDEX',
+                      xsize=(14,10),fts=20,cmap='RdBu_r',
+                      levels0=[-0.1,0.1,31],
+                      RCT=None,contourRCT=None,
+                      quiver=None,quiverkz=None,
+                      arv=1,arh=10,normalized=False,
+                      xline=None,xline2=None,yline=None,
+                      namefig='test',lw=2):
+    
+    fig, ax = plt.subplots(1,1,figsize=xsize)
+    
+    #nmin,nmax = np.nanmin(datatmp),np.nanmax(datatmp)
+    print(levels0)
+    nmin,nmax,dn = [ll for ll in levels0]
+    seuil = 0.015  # <--- Définissez ici la limite des variations non importantes
+    if nmin>= 0 or nmax < seuil:
+        levels = np.linspace(nmin, nmax, dn)  # 10 levels from 0 to 1
+    else:
+        # 1. On génère les niveaux négatifs et positifs en excluant la zone autour de 0
+        levels_neg = np.linspace(nmin, -seuil, dn // 2)
+        levels_pos = np.linspace(seuil, nmax, dn // 2)
+    
+        # 2. On fusionne les deux listes : l'espace entre -seuil et +seuil sera une seule grande bande blanche
+        levels = np.concatenate([levels_neg, levels_pos])
+        print(levels)
+
+    #norm = mpl.colors.Normalize(vmin=nmin, vmax=nmax)
+    
+    if normalized and xline is not None:
+        k1d_grid = k1d_grid/xline #yline= PBL
+        if xline2 is not None:
+            xline2 /= xline
+        #xline /= xline
+        
+    
+    cf = ax.contourf(k1d_grid,z_grid,datatmp,levels=levels,cmap=cmap,extend='both')
+    #ax.contour(k1d_grid,z_grid,datatmp, levels=[0], colors='black', linewidths=1)
+    if RCT is not None and contourRCT is not None:
+        ax.contour(k1d_grid,z_grid,RCT, levels=contourRCT, \
+                   linestyles='--', colors='black', linewidths=1)    
+    if quiver is not None:
+        arv = arv ; arh = arh
+        k1,z1 = k1d_grid,z_grid
+        if quiverkz is not None:
+            k1 = quiverkz[0]
+            z1 = quiverkz[1]
+        ax.quiver(k1[::arv,::arh],z1[::arv,::arh],
+                  quiver[0][::arv,::arh],quiver[1][::arv,::arh])
+    
+    if xline is not None and not normalized:
+        ax.axvline(x=xline,color='g',lw=lw/2,ls=':')
+    if xline2 is not None:
+        ax.axvline(x=xline2,color='r',lw=lw,ls=':')
+    if yline is not None:
+        ax.axhline(y=yline,color='k',lw=lw/2,ls=':')
+        #ax.axhline(y=PBLheight,color='k',lw=lw/2,ls=':')
+    
+    ax.set_xscale('log')
+    if not normalized:
+        namex2 = 'Wavenumber k (rad/m)' 
+    else:
+        namex2 = r'$\mathbf{\lambda/H \;}$'
+    ax.set_xlabel(namex2,fontsize=fts) 
+    ax.set_ylabel('Altitude (m)',fontsize=fts) 
+    ax.set_title(index+' with log-scaled x-axis',fontsize=fts)
+    ax.tick_params(axis='both', labelsize=fts)
+    
+    # Add colorbar
+    cbar = plt.colorbar(cf, ax=ax)
+    cbarcaption = index
+    cbar.set_label(index,fontsize=fts)
+    cbar.ax.set_ylabel(cbarcaption, rotation=270)
+    cbar.ax.tick_params(labelsize=fts)  # Increase font size
+
     # Save figure
     namefig+='.png'
     savefig(fig, namefig)
